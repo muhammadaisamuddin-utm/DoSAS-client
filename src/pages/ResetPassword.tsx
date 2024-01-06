@@ -17,7 +17,11 @@ const formSchema = z.object({
   confirmPassword: z.string(),
 });
 
-function ResetPassword() {
+interface resetPasswordProp {
+  isFirstTime?: boolean;
+}
+
+function ResetPassword({ isFirstTime }: resetPasswordProp) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -39,6 +43,12 @@ function ResetPassword() {
         <span className="text-center text-2xl font-bold ">
           Reset your password
         </span>
+
+        {isFirstTime && (
+          <span className="text-gray-500">
+            For first time login, user will be required to update the password.
+          </span>
+        )}
 
         {/* new password */}
         <FormField
