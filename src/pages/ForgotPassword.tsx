@@ -32,7 +32,7 @@ function ForgotPassword() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="flex flex-col w-1/3 m-auto space-y-6 text-left"
+        className="flex flex-col w-1/3 m-auto space-y-6 text-left mt-10"
       >
         <span className="text-center text-2xl font-bold ">Reset your password</span>
         <span className="">
