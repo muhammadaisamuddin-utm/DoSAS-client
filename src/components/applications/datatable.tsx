@@ -53,7 +53,7 @@ export function DataTable<TData, TValue>({
   });
 
   return (
-    <div>
+    <div className="px-10 mx-10">
       <div className="flex items-center py-4">
         <Input
           placeholder="Filter applications"

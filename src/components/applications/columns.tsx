@@ -22,6 +22,10 @@ export const columns: ColumnDef<Application>[] = [
         </Button>
       );
     },
+    cell: ({row}) => {
+      const application = row.original;
+      return <span className="block text-center">{application.studentId}</span>
+    }
   },
   {
     accessorKey: "fullName",
@@ -66,7 +70,34 @@ export const columns: ColumnDef<Application>[] = [
     },
     cell: ({ row }) => {
       const application = row.original;
-      return <span>{application.applicationStatus.toString()}</span>;
+      switch (application.applicationStatus.toString()) {
+        case "REJECTED":
+          return (
+            <span className="block text-center font-bold text-red-500">
+              {application.applicationStatus.toString()}
+            </span>
+          );
+
+        case "PENDING":
+          return (
+            <span className="block text-center font-bold text-blue-500">
+              {application.applicationStatus.toString()}
+            </span>
+          );
+
+        case "APPROVED":
+          return (
+            <span className="block text-center font-bold text-green-500">
+              {application.applicationStatus.toString()}
+            </span>
+          );
+        default:
+          return (
+            <span className="block text-center font-bold ">
+              {application.applicationStatus.toString()}
+            </span>
+          );
+      }
     },
   },
   {
