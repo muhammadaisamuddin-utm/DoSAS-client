@@ -5,109 +5,52 @@ import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-// basically just put your data type here
-// and adjust accordingly
-
 export const columns: ColumnDef<Application>[] = [
   {
-    accessorKey: "studentId",
+    accessorKey: "indexNum",
+    header: () => {
+      return <div>No.</div>;
+    },
+    cell: ({ row }) => {
+      const rowIndex = row.index + 1;
+      return <span className="block text-center">{rowIndex}</span>;
+    },
+  },
+  {
+    accessorKey: "dateSubmitted",
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Student ID
+          Date Submitted
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );
     },
-    cell: ({row}) => {
+    cell: ({ row }) => {
       const application = row.original;
-      return <span className="block text-center">{application.studentId}</span>
-    }
+      return <span className="block text-center">{application.dateSubmitted}</span>;
+    },
   },
   {
-    accessorKey: "fullName",
+    accessorKey: "semester",
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Name
+          Semester
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );
     },
-  },
-  {
-    accessorKey: "email",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Email
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
-  },
-  {
-    accessorKey: "studentFaculty",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Faculty
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
-    cell: ({row}) => {
+    cell: ({ row }) => {
       const application = row.original;
-      return <span className="block text-center">{application.studentFaculty}</span>
-    }
-  },
-  {
-    accessorKey: "programCode",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Programme Code
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
+      return <span className="block text-center">{application.semester}</span>;
     },
-    cell: ({row}) => {
-      const application = row.original;
-      return <span className="block text-center">{application.programCode}</span>
-    }
-  },
-  {
-    accessorKey: "programName",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Programme Name
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
-    cell: ({row}) => {
-      const application = row.original;
-      return <span className="block text-center">{application.programName}</span>
-    }
   },
   {
     accessorKey: "applicationStatus",

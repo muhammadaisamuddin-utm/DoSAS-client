@@ -10,7 +10,7 @@ function Header({ username }: Readonly<{ username: string }>) {
       <div className="flex">
         <div className="flex px-3">
           <div>Hello {username}</div>
-          <span className="ml-3 text-gray-400">(Office Assistant)</span>
+          <span className="ml-3 text-gray-500">(Office Assistant)</span>
         </div>
         <div className="px-3 cursor-pointer">Logout</div>
       </div>
