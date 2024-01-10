@@ -8,7 +8,7 @@ function Dashboard() {
   return (
     <>
       <Header username="Ali bin Abu" />
-      <Countdown />
+      <Countdown targetDate={new Date("2024-02-02").getTime()} />
       <DataTable columns={columns} data={mockApplications} />
     </>
   );
