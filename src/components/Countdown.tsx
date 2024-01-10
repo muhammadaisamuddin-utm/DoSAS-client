@@ -1,9 +1,5 @@
 import { useEffect, useState } from "react";
 
-interface CountDownProps {
-  targetDate: number;
-}
-
 interface TimeLeft {
   days: number;
   hours: number;
@@ -11,8 +7,9 @@ interface TimeLeft {
   seconds: number;
 }
 
-function Countdown({ targetDate }: Readonly<CountDownProps>) {
-  //calculate time left
+function Countdown() {
+  const targetDate: number = new Date("2024-02-02").getTime()
+
   const calculateTimeLeft = (): TimeLeft => {
     const now = new Date().getTime();
     const diff = targetDate - now;

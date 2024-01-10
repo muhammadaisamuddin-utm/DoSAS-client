@@ -36,10 +36,12 @@ export function DataTable<TData, TValue>({
 }: Readonly<DataTableProps<TData, TValue>>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [globalFilter, setGlobalFilter] = useState('');
 
   const table = useReactTable({
     columns,
     data,
+    onGlobalFilterChange: setGlobalFilter,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     onSortingChange: setSorting,
@@ -49,6 +51,7 @@ export function DataTable<TData, TValue>({
     state: {
       sorting,
       columnFilters,
+      globalFilter
     },
   });
 
@@ -58,9 +61,8 @@ export function DataTable<TData, TValue>({
         <Input
           placeholder="Filter applications"
           className="max-w-sm"
-          value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
           onChange={(event) => {
-            table.getColumn("email")?.setFilterValue(event.target.value);
+            table.setGlobalFilter(event.target.value);
           }}
         />
       </div>
