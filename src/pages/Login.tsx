@@ -12,6 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import student_discussing from '../assets/student_discussing.svg';
 
 const formSchema = z.object({
   email: z.string(),
@@ -32,61 +33,73 @@ function Login() {
   }
 
   return (
-    <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="flex flex-col w-1/2 m-auto space-y-6 text-left"
-      >
-        <span className="">Welcome!</span>
-        <span className="font-bold">Sign in to DoSAS</span>
+    <div className="flex mx-auto w-screen h-screen justify-center items-center">
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="flex flex-col border mt-10 mx-5 p-10 w-1/4 space-y-6 text-left rounded-xl shadow-md bgx-red-500"
+        >
+          <span className="text-2xl">Welcome!</span>
+          <span className="text-3xl font-bxold">Sign in to DoSAS</span>
 
-        {/* user id/email */}
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>User ID or Email</FormLabel>
-              <FormControl>
-                <Input placeholder="" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+          {/* user id/email */}
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>User ID or Email</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Enter your user id or email address"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        {/* password */}
-        <FormField
-          control={form.control}
-          name="password"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Password</FormLabel>
-              <FormControl>
-                <Input placeholder="" {...field} type="password" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <div className="flex items-center space-x-2">
-          <Checkbox id="remember-me" />
-          <label
-            htmlFor="remember-me"
-            className="leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-          >
-            Remember me
-          </label>
-        </div>
+          {/* password */}
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Password</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Enter your password"
+                    {...field}
+                    type="password"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <div className="flex items-center space-x-2">
+            <Checkbox id="remember-me" />
+            <label
+              htmlFor="remember-me"
+              className="leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              Remember me
+            </label>
+          </div>
 
-        <Button type="submit">Login</Button>
+          <Button type="submit" className="text-md p-7">
+            Login
+          </Button>
 
-        <div className="text-center">
-          <span className="text-gray-500">Forgot password? </span>
-          <span className="font-bold cursor-pointer">Click here</span>
-        </div>
-      </form>
-    </Form>
+          <div className="text-center">
+            <span className="text-gray-500">Forgot password? </span>
+            <span className="font-bold cursor-pointer">Click here</span>
+          </div>
+        </form>
+      </Form>
+        <img className="mx-5" src={student_discussing} alt="Student group"/>
+    </div>
   );
 }
 
