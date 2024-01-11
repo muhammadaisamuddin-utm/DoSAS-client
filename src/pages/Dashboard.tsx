@@ -7,7 +7,7 @@ import { mockApplications } from "@/test/mockApplications";
 function Dashboard() {
   return (
     <>
-      <Header username="Ali bin Abu" />
+      <Header username="Ali bin Abu" role="Programme Coordinator"/>
       <Countdown />
       <DataTable columns={columns} data={mockApplications} />
     </>
