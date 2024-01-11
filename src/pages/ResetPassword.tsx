@@ -38,7 +38,7 @@ function ResetPassword({ isFirstTime }: resetPasswordProp) {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="flex flex-col w-1/3 m-auto space-y-6 text-left mt-10"
+        className="flex flex-col border mt-10 mx-auto p-10 w-1/4 space-y-6 text-left rounded-xl shadow-md bgx-red-500"
       >
         <span className="text-center text-2xl font-bold ">
           Reset your password
