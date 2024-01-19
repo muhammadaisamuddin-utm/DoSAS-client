@@ -1,15 +1,18 @@
-import Countdown from "@/components/Countdown";
-import Header from "@/components/Header";
-import { columns } from "@/components/applications/columns";
-import { DataTable } from "@/components/applications/datatable";
-import { mockApplications } from "@/test/mockApplications";
+import { useAuth } from "@/authContext";
+import StudentDashboard from "./StudentDashboard";
+import SignerDashboard from "./SignerDashboard";
+import OfficeAssistantDashboard from "./OfficeAssistantDashboard";
 
 function Dashboard() {
+  const { user } = useAuth();
+  const role = user?.role;
+
   return (
     <>
-      <Header username="Ali bin Abu" role="Programme Coordinator"/>
-      <Countdown />
-      <DataTable columns={columns} data={mockApplications} />
+      {role === "STUDENT" && <StudentDashboard />}
+      {role === "OFFICE_ASSISTANT" && <OfficeAssistantDashboard />}
+      {role === "SUPERVISOR" ||
+        (role === "PROGRAM_COORDINATOR" && <SignerDashboard />)}
     </>
   );
 }
