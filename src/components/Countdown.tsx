@@ -8,7 +8,18 @@ interface TimeLeft {
 }
 
 function Countdown() {
-  const targetDate: number = new Date("2024-02-02").getTime()
+  // maybe later put it in an env var
+  const targetDate: number = new Date("2024-02-02").getTime();
+
+  const getFormattedDate = (targetDate: number) => {
+    const date = new Date(targetDate);
+    const day = date.getDate().toString().padStart(2, "0");
+    const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Note: Months are zero-based
+    const year = date.getFullYear();
+    const formattedDate = `${day}/${month}/${year}`;
+
+    return formattedDate;
+  };
 
   const calculateTimeLeft = (): TimeLeft => {
     const now = new Date().getTime();
@@ -38,7 +49,10 @@ function Countdown() {
 
   return (
     <div className="flex flex-wrap w-full my-4 justify-end">
-      <span className="mr-2">Deferment period will end in: </span>
+      <div className="flex flex-col items-center">
+        <span className="mr-2">Deferment period will end in: </span>
+        <span>{"(" + getFormattedDate(targetDate) + ")"}</span>
+      </div>
 
       <div className="countdown-container flex space-x-3 mx-2">
         <div className="countdown-item-container flex flex-col content-center">
