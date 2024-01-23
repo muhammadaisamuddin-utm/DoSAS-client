@@ -6,7 +6,7 @@ import { mockApplications } from "@/test/mockApplications";
 import { User } from "@/types/User";
 
 interface OfficeAssistantDashboardProps {
-  user?: User;
+  user?: User | null;
 }
 
 function OfficeAssistantDashboard({
@@ -14,7 +14,7 @@ function OfficeAssistantDashboard({
 }: Readonly<OfficeAssistantDashboardProps>) {
   return (
     <>
-      <Header username={user?.username} role={user?.role} />
+      <Header username={user?.name} role={user?.role} />
       <Countdown />
       <DataTable columns={columns} data={mockApplications} />
     </>

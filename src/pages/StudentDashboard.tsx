@@ -5,18 +5,29 @@ import { DataTable } from "@/components/applications/datatable";
 import { mockApplications } from "@/test/studentApplications";
 import { Button } from "@/components/ui/button";
 import { User } from "@/types/User";
+import { useNavigate } from "react-router-dom";
 
 interface StudentDashboardProps {
-  user?: User;
+  user?: User | null;
 }
 
-function StudentDashboard({user}: Readonly<StudentDashboardProps>) {
+function StudentDashboard({ user }: Readonly<StudentDashboardProps>) {
+  const navigate = useNavigate();
+
   return (
     <>
-      <Header username={user?.username} role={user?.role}/>
+      <Header username={user?.name} role={user?.role} />
       <Countdown />
-      <div className="mx-20 my-5 w-full font-bold text-2xl text-center">Student Application History</div>
-      <Button className="ml-20 border-gray-300 border" variant="secondary">Create a new deferment application</Button>
+      <div className="mx-20 my-5 w-full font-bold text-2xl text-center">
+        Student Application History
+      </div>
+      <Button
+        className="ml-20 border-gray-300 border"
+        variant="secondary"
+        onClick={() => navigate("/application/submit")}
+      >
+        Create a new deferment application
+      </Button>
       <DataTable columns={columns} data={mockApplications} />
     </>
   );

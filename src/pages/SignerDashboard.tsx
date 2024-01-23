@@ -6,13 +6,13 @@ import { mockApplications } from "@/test/mockApplications";
 import { User } from "@/types/User";
 
 interface SignerDashboardProps {
-  user?: User;
+  user?: User | null;
 }
 
 function SignerDashboard({ user }: Readonly<SignerDashboardProps>) {
   return (
     <>
-      <Header username={user?.username} role={user?.role} />
+      <Header username={user?.name} role={user?.role} />
       <Countdown />
       <DataTable columns={columns} data={mockApplications} />
     </>
