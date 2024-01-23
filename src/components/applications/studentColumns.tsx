@@ -31,7 +31,9 @@ export const columns: ColumnDef<Application>[] = [
     },
     cell: ({ row }) => {
       const application = row.original;
-      return <span className="block text-center">{application.dateSubmitted}</span>;
+      return (
+        <span className="block text-center">{application.dateSubmitted}</span>
+      );
     },
   },
   {
@@ -100,12 +102,21 @@ export const columns: ColumnDef<Application>[] = [
   {
     id: "actions",
     header: "Actions",
-    cell: () => {
+    cell: ({ row }) => {
+      const application = row.original;
+
       return (
         <div className="flex space-x-2 justify-center">
-          <Button variant="secondary" size="sm">
-            Download form
-          </Button>
+          {application.applicationStatus.toString() === "REJECTED" ? (
+            <Button variant="secondary" size="sm">
+              Update application
+            </Button>
+          ) : (
+            <Button variant="secondary" size="sm" disabled>
+              Update application
+            </Button>
+          )}
+
           <Button variant="secondary" size="sm">
             View details
           </Button>

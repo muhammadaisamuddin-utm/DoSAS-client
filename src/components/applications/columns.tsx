@@ -22,10 +22,10 @@ export const columns: ColumnDef<Application>[] = [
         </Button>
       );
     },
-    cell: ({row}) => {
+    cell: ({ row }) => {
       const application = row.original;
-      return <span className="block text-center">{application.studentId}</span>
-    }
+      return <span className="block text-center">{application.studentId}</span>;
+    },
   },
   {
     accessorKey: "fullName",
@@ -68,10 +68,12 @@ export const columns: ColumnDef<Application>[] = [
         </Button>
       );
     },
-    cell: ({row}) => {
+    cell: ({ row }) => {
       const application = row.original;
-      return <span className="block text-center">{application.studentFaculty}</span>
-    }
+      return (
+        <span className="block text-center">{application.studentFaculty}</span>
+      );
+    },
   },
   {
     accessorKey: "programCode",
@@ -86,10 +88,12 @@ export const columns: ColumnDef<Application>[] = [
         </Button>
       );
     },
-    cell: ({row}) => {
+    cell: ({ row }) => {
       const application = row.original;
-      return <span className="block text-center">{application.programCode}</span>
-    }
+      return (
+        <span className="block text-center">{application.programCode}</span>
+      );
+    },
   },
   {
     accessorKey: "programName",
@@ -104,10 +108,12 @@ export const columns: ColumnDef<Application>[] = [
         </Button>
       );
     },
-    cell: ({row}) => {
+    cell: ({ row }) => {
       const application = row.original;
-      return <span className="block text-center">{application.programName}</span>
-    }
+      return (
+        <span className="block text-center">{application.programName}</span>
+      );
+    },
   },
   {
     accessorKey: "applicationStatus",
@@ -161,10 +167,10 @@ export const columns: ColumnDef<Application>[] = [
       return (
         <div className="flex space-x-2 justify-center">
           <Button variant="secondary" size="sm">
-            Download form
+          View details
           </Button>
           <Button variant="secondary" size="sm">
-            View details
+            Manage application
           </Button>
         </div>
       );
