@@ -11,7 +11,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Check, ChevronsUpDown } from "lucide-react";
+import { Label } from "@radix-ui/react-label";
+import { ChevronsUpDown, Plus } from "lucide-react";
 import { useState } from "react";
 import {
   PopoverContent,
@@ -25,10 +26,18 @@ import {
   CommandInput,
   CommandItem,
 } from "@/components/ui/command";
-import { cn } from "@/lib/utils";
-import { Textarea } from "@/components/ui/textarea";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/authContext";
+import { parse } from "path";
+import { Select } from "@/components/ui/select";
+import {
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import axios from "axios";
+// import { CommandEmpty, CommandInput } from "cmdk";
 
 const formSchema = z.object({
   name: z.string(),
@@ -37,36 +46,34 @@ const formSchema = z.object({
   program_code: z.string(),
   faculty: z.string(),
   program_name: z.string(),
-  current_semester: z.string(),
+  current_semester: z.number(),
+  deferment_reason: z.string(),
   main_supervisor: z.string(),
   co_supervisor: z.string(),
   nationality: z.string(),
   proposal_defense: z.string(),
   nht_completion_status: z.string(),
-  deferment_history: z.string(),
+  // deferment_history: z.string(),
 });
 
 const reasons = [
   {
-    value: "",
-    label: "None",
-  },
-  {
-    value: "some information in deferment application form is not available",
+    value: "Some information in deferment application form is not available",
     label: "Some information in deferment application form is not available",
   },
-  { value: "missing medical report", label: "Missing medical report" },
-  { value: "missing offical letter", label: "Missing official letter" },
-  { value: "missing signatures", label: "Missing signatures" },
-  { value: "others", label: "Others" },
+  { value: "Missing medical report", label: "Missing medical report" },
+  { value: "Missing offical letter", label: "Missing official letter" },
+  { value: "Missing signatures", label: "Missing signatures" },
+  { value: "Others", label: "Others" },
 ];
 
-function ViewApplicationByStudent() {
+function SubmitApplicationForm() {
   const { user } = useAuth();
   const parsedUser = JSON.parse(user);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
+    // defaulvalues for form fields
     defaultValues: {
       name: parsedUser.name,
       nric: parsedUser.identity_no,
@@ -82,9 +89,17 @@ function ViewApplicationByStudent() {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("");
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-  }
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    try {
+      const response = await axios.post(
+        "https://api.dosas.online/api/deferment-application",
+        values
+      );
+      console.log(response);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const navigate = useNavigate();
 
@@ -95,11 +110,11 @@ function ViewApplicationByStudent() {
         className="space-y-2 flex flex-col flex-wrap w-full max-w-lg justify-center mx-auto mt-2 mb-4"
       >
         <div className="flex relative items-center">
-          <Button className="z-40 w-20 h-8" onClick={() => navigate(-1)}>
+          <Button className="z-40 w-20 h-8" onClick={() => navigate("/")}>
             Back
           </Button>
           <span className="absolute mx-auto w-full text-center font-bold">
-            Student Deferment Application View
+            Submit Student Deferment Application
           </span>
         </div>
         <div className="w-full flex space-x-4 justify-between">
@@ -112,9 +127,9 @@ function ViewApplicationByStudent() {
                 <FormLabel className="">Name</FormLabel>
                 <FormControl>
                   <Input
-                    disabled
-                    className="bg-gray-100 font-bold"
+                    className="bg-gray-100"
                     value={parsedUser.name}
+                    disabled
                   />
                 </FormControl>
                 <FormMessage />
@@ -131,12 +146,11 @@ function ViewApplicationByStudent() {
                 <FormLabel className="">IC/ISID</FormLabel>
                 <FormControl>
                   <Input
-                    disabled
-                    className="bg-gray-100 font-bold"
+                    className="bg-gray-100"
                     value={parsedUser.identity_no}
+                    disabled
                   />
                 </FormControl>
-                <FormMessage />
               </FormItem>
             )}
           />
@@ -150,19 +164,18 @@ function ViewApplicationByStudent() {
                 <FormLabel className="">Student ID</FormLabel>
                 <FormControl>
                   <Input
+                    className="bg-gray-100"
+                    value={parsedUser.userid}
                     disabled
-                    className="bg-gray-100 font-bold"
-                    value={parsedUser.identity_no}
                   />
                 </FormControl>
-                <FormMessage />
+                {/* <FormMessage /> */}
               </FormItem>
             )}
           />
         </div>
 
         <div className="w-full flex space-x-2 justify-between">
-          {/* name */}
           {/* program_code */}
           <div className="w-1/4">
             <FormField
@@ -172,11 +185,11 @@ function ViewApplicationByStudent() {
                 <FormItem>
                   <FormLabel>Program Code</FormLabel>
                   <Input
-                    disabled
-                    className="bg-gray-100 font-bold"
+                    className="bg-gray-100"
                     value={parsedUser.program_code}
+                    disabled
                   />
-                  <FormMessage />
+                  {/* <FormMessage /> */}
                 </FormItem>
               )}
             />
@@ -191,11 +204,11 @@ function ViewApplicationByStudent() {
                 <FormItem>
                   <FormLabel>Program Name</FormLabel>
                   <Input
-                    disabled
-                    className="bg-gray-100 font-bold"
+                    className="bg-gray-100"
                     value={parsedUser.program_name}
+                    disabled
                   />
-                  <FormMessage />
+                  {/* <FormMessage /> */}
                 </FormItem>
               )}
             />
@@ -212,11 +225,11 @@ function ViewApplicationByStudent() {
                 <FormItem>
                   <FormLabel>Faculty</FormLabel>
                   <Input
+                    className="bg-gray-100"
+                    value={parsedUser.faculty_name}
                     disabled
-                    className="bg-gray-100 font-bold"
-                    value={parsedUser.program_name}
                   />
-                  <FormMessage />
+                  {/* <FormMessage /> */}
                 </FormItem>
               )}
             />
@@ -231,11 +244,12 @@ function ViewApplicationByStudent() {
                 <FormItem>
                   <FormLabel>Current Semester</FormLabel>
                   <Input
-                    disabled
-                    className="bg-gray-100 font-bold"
+                    className="bg-gray-100"
                     value={parsedUser.current_semester}
+                    // placeholder="2022/2023 - 1"
+                    disabled
                   />
-                  <FormMessage />
+                  {/* <FormMessage /> */}
                 </FormItem>
               )}
             />
@@ -245,17 +259,33 @@ function ViewApplicationByStudent() {
         {/* deferment_reason */}
         <FormField
           control={form.control}
-          name="proposal_defense"
-          render={() => (
+          name="deferment_reason"
+          render={({ field }) => (
             <FormItem>
               <FormLabel>Deferment Reason</FormLabel>
-              <FormControl>
-                <Input
-                  disabled
-                  className="bg-gray-100 font-bold"
-                  value={parsedUser.deferment_reason}
-                />
-              </FormControl>
+              <Select onValueChange={field.onChange} defaultValue="field.value">
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a deferment reason" />
+                  </SelectTrigger>
+                  {/* <Input
+                  className="bg-gray-100"
+                  {...field}
+                /> */}
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="health">health</SelectItem>
+                  <SelectItem value="war">war</SelectItem>
+                </SelectContent>
+              </Select>
+              {/* <Button
+                variant="outline"
+                role="combobox"
+                // aria-expanded={open}
+                className="w-full justify-end"
+              >
+                <ChevronsUpDown className="  shrink-0 " />
+              </Button> */}
               <FormMessage />
             </FormItem>
           )}
@@ -265,15 +295,11 @@ function ViewApplicationByStudent() {
         <FormField
           control={form.control}
           name="main_supervisor"
-          render={() => (
+          render={({ field }) => (
             <FormItem>
               <FormLabel>Main Supervisor</FormLabel>
               <FormControl>
-                <Input
-                  disabled
-                  className="bg-gray-100 font-bold"
-                  value={parsedUser.main_supervisor}
-                />
+                <Input className="" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -284,16 +310,15 @@ function ViewApplicationByStudent() {
         <FormField
           control={form.control}
           name="co_supervisor"
-          render={() => (
+          render={({ field }) => (
             <FormItem>
               <FormLabel>Co-Supervisor</FormLabel>
               <FormControl>
                 <div className="flex space-x-2">
-                  <Input
-                    disabled
-                    className="bg-gray-100 font-bold"
-                    value={parsedUser.co_supervisor}
-                  />
+                  <Input className="" {...field} />
+                  <Button variant="outline" className="">
+                    <Plus className="  shrink-0 " />
+                  </Button>
                 </div>
               </FormControl>
               <FormMessage />
@@ -310,12 +335,12 @@ function ViewApplicationByStudent() {
               <FormLabel>Nationality</FormLabel>
               <FormControl>
                 <Input
-                  disabled
-                  className="bg-gray-100 font-bold"
+                  className="bg-gray-100"
                   value={parsedUser.nationality}
+                  disabled
                 />
               </FormControl>
-              <FormMessage />
+              {/* <FormMessage /> */}
             </FormItem>
           )}
         />
@@ -324,15 +349,11 @@ function ViewApplicationByStudent() {
         <FormField
           control={form.control}
           name="proposal_defense"
-          render={() => (
+          render={({ field }) => (
             <FormItem>
               <FormLabel>Proposal Defense</FormLabel>
               <FormControl>
-                <Input
-                  disabled
-                  className="bg-gray-100 font-bold"
-                  value={parsedUser.proposal_defense}
-                />
+                <Input className="" placeholder="" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -343,30 +364,35 @@ function ViewApplicationByStudent() {
         <FormField
           control={form.control}
           name="nht_completion_status"
-          render={() => (
+          render={({ field }) => (
             <FormItem>
               <FormLabel>NHT Completion Status</FormLabel>
               <FormControl>
-                <Input
-                  disabled
-                  className="bg-gray-100 font-bold"
-                  value={parsedUser.nht_completion_status}
-                />
+                <Input className="" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
 
-        <Button
-          className="text-right w-full mx-1"
-          onClick={() => navigate("/")}
-        >
-          Go Back
-        </Button>
+        <div className="my-4 py-2">
+          <Button variant="secondary">
+            Download Deferment Application Form
+          </Button>
+        </div>
+
+        <div className="my-4 py-2">
+          <FormLabel>Upload Deferment Application Form</FormLabel>
+          <Input type="file" />
+        </div>
+        <div className="flex w-full justify-around">
+          <Button className="text-right w-full mx-1" type="submit">
+            Submit
+          </Button>
+        </div>
       </form>
     </Form>
   );
 }
 
-export default ViewApplicationByStudent;
+export default SubmitApplicationForm;

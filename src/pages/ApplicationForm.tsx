@@ -13,6 +13,20 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@radix-ui/react-label";
 import { ChevronsUpDown, Plus } from "lucide-react";
+import { useState } from "react";
+import {
+  PopoverContent,
+  Popover,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+} from "@/components/ui/command";
+// import { CommandEmpty, CommandInput } from "cmdk";
 
 const formSchema = z.object({
   name: z.string(),
@@ -30,6 +44,17 @@ const formSchema = z.object({
   deferment_history: z.string(),
 });
 
+const reasons = [
+  {
+    value: "Some information in deferment application form is not available",
+    label: "Some information in deferment application form is not available",
+  },
+  { value: "Missing medical report", label: "Missing medical report" },
+  { value: "Missing offical letter", label: "Missing official letter" },
+  { value: "Missing signatures", label: "Missing signatures" },
+  { value: "Others", label: "Others" },
+];
+
 function ApplicationForm() {
   // define form
   const form = useForm<z.infer<typeof formSchema>>({
@@ -37,6 +62,9 @@ function ApplicationForm() {
     // defaulvalues for form fields
     defaultValues: {},
   });
+
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState("");
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
@@ -46,6 +74,7 @@ function ApplicationForm() {
     <Form {...form}>
       <div className="font-bold p-4 text-center">
         Student Deferment Application
+        {/* Student Deferment Application */}
       </div>
 
       <form
@@ -62,7 +91,11 @@ function ApplicationForm() {
                 <FormLabel className="">Name</FormLabel>
                 <FormControl>
                   {/* <Input placeholder="Name" {...field} /> */}
-                  <Input placeholder="" {...field} />
+                  <Input
+                    className="bg-gray-100"
+                    placeholder="ALI BIN ABU"
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -75,10 +108,14 @@ function ApplicationForm() {
             name="nric"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="">NRIC</FormLabel>
+                <FormLabel className="">IC/ISID</FormLabel>
                 <FormControl>
                   {/* <Input placeholder="NRIC" {...field} /> */}
-                  <Input placeholder="" {...field} />
+                  <Input
+                    className="bg-gray-100"
+                    placeholder="921212-10-5431"
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -93,8 +130,11 @@ function ApplicationForm() {
               <FormItem>
                 <FormLabel className="">Student ID</FormLabel>
                 <FormControl>
-                  {/* <Input placeholder="NRIC" {...field} /> */}
-                  <Input placeholder="" {...field} />
+                  <Input
+                    className="bg-gray-100"
+                    placeholder="MAN221001"
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -112,13 +152,18 @@ function ApplicationForm() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Program Code</FormLabel>
-                  <Button
+                  <Input
+                    className="bg-gray-100"
+                    placeholder="MANPA1CKA"
+                    {...field}
+                  />
+                  {/* <Button
                     variant="outline"
                     role="combobox"
                     className="w-full justify-end"
                   >
                     <ChevronsUpDown className="  shrink-0 " />
-                  </Button>
+                  </Button> */}
                   <FormMessage />
                 </FormItem>
               )}
@@ -133,13 +178,18 @@ function ApplicationForm() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Program Name</FormLabel>
-                  <Button
+                  <Input
+                    className="bg-gray-100"
+                    placeholder="MASTER OF SOFTWARE ENGINEERING"
+                    {...field}
+                  />
+                  {/* <Button
                     variant="outline"
                     role="combobox"
                     className="w-full justify-end"
                   >
                     <ChevronsUpDown className="  shrink-0 " />
-                  </Button>
+                  </Button> */}
                   <FormMessage />
                 </FormItem>
               )}
@@ -156,13 +206,19 @@ function ApplicationForm() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Faculty</FormLabel>
-                  <Button
+                  <Input
+                    className="bg-gray-100"
+                    placeholder="RAZAK FACULTY OF TECHNOLOGY AND INFORMATICS
+"
+                    {...field}
+                  />
+                  {/* <Button
                     variant="outline"
                     role="combobox"
                     className="w-full justify-end"
                   >
                     <ChevronsUpDown className="  shrink-0 " />
-                  </Button>
+                  </Button> */}
                   <FormMessage />
                 </FormItem>
               )}
@@ -178,19 +234,57 @@ function ApplicationForm() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Current Semester</FormLabel>
-                  <Button
+                  <Input
+                    className="bg-gray-100"
+                    placeholder="2022/2023 - 1"
+                    {...field}
+                  />
+
+                  {/* <Button
                     variant="outline"
                     role="combobox"
                     className="w-full justify-end"
                   >
                     <ChevronsUpDown className="  shrink-0 " />
-                  </Button>
+                  </Button> */}
                   <FormMessage />
                 </FormItem>
               )}
             />
           </div>
         </div>
+
+        {/* proposal_defense */}
+        <FormField
+          control={form.control}
+          name="proposal_defense"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Deferment Reason</FormLabel>
+              <FormControl>
+                {/* <Input placeholder="Proposal Defense" {...field} /> */}
+                {/* <Input placeholder="" {...field} /> */}
+
+                <Input
+                  className="bg-gray-100"
+                  placeholder="PERSONAL HEALTH ISSUES"
+                  {...field}
+                />
+                {/* <br /> */}
+              </FormControl>
+
+              {/* <Button
+                variant="outline"
+                role="combobox"
+                // aria-expanded={open}
+                className="w-full justify-end"
+              >
+                <ChevronsUpDown className="  shrink-0 " />
+              </Button> */}
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
         {/* main_supervisor */}
         <FormField
@@ -200,7 +294,12 @@ function ApplicationForm() {
             <FormItem>
               <FormLabel>Main Supervisor</FormLabel>
               <FormControl>
-                <Input placeholder="" {...field} />
+                {/* <Input placeholder="" {...field} /> */}
+                <Input
+                  className="bg-gray-100"
+                  placeholder="DR SHAZAM BIN SHAZZA"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -216,10 +315,16 @@ function ApplicationForm() {
               <FormLabel>Co-Supervisor</FormLabel>
               <FormControl>
                 <div className="flex space-x-2">
-                  <Input placeholder="" {...field} />
-                  <Button variant="outline" className="">
+                  {/* <Input placeholder="" {...field} /> */}
+
+                  <Input
+                    className="bg-gray-100"
+                    placeholder="DR MIRA BINTI MARI"
+                    {...field}
+                  />
+                  {/* <Button variant="outline" className="">
                     <Plus className="  shrink-0 " />
-                  </Button>
+                  </Button> */}
                 </div>
               </FormControl>
 
@@ -237,17 +342,23 @@ function ApplicationForm() {
               <FormLabel>Nationality</FormLabel>
               <FormControl>
                 {/* <Input type="" placeholder="Nationality" {...field} /> */}
-                {/* <Input type="" placeholder="" {...field} /> */}
-                <br />
+                <Input
+                  className="bg-gray-100"
+                  disabled
+                  type=""
+                  placeholder="MALAYSIAN"
+                  {...field}
+                />
+                {/* <br /> */}
               </FormControl>
 
-              <Button
+              {/* <Button
                 variant="outline"
                 role="combobox"
                 className="w-full justify-end"
               >
                 <ChevronsUpDown className="  shrink-0 " />
-              </Button>
+              </Button> */}
               <FormMessage />
             </FormItem>
           )}
@@ -263,17 +374,19 @@ function ApplicationForm() {
               <FormControl>
                 {/* <Input placeholder="Proposal Defense" {...field} /> */}
                 {/* <Input placeholder="" {...field} /> */}
-                <br />
+
+                <Input className="bg-gray-100" placeholder="" {...field} />
+                {/* <br /> */}
               </FormControl>
 
-              <Button
+              {/* <Button
                 variant="outline"
                 role="combobox"
                 // aria-expanded={open}
                 className="w-full justify-end"
               >
                 <ChevronsUpDown className="  shrink-0 " />
-              </Button>
+              </Button> */}
               <FormMessage />
             </FormItem>
           )}
@@ -289,37 +402,129 @@ function ApplicationForm() {
               <FormControl>
                 {/* <Input placeholder="NHT Completion Status" {...field} /> */}
                 {/* <Input placeholder="" {...field} /> */}
+                <Input
+                  className="bg-gray-100"
+                  placeholder="INCOMPLETE"
+                  {...field}
+                />
               </FormControl>
-              <br />
+              {/* <br /> */}
 
-              <Button
+              {/* <Button
                 variant="outline"
                 role="combobox"
                 // aria-expanded={open}
                 className="w-full justify-end"
               >
                 <ChevronsUpDown className="  shrink-0 " />
-              </Button>
+              </Button> */}
               <FormMessage />
             </FormItem>
           )}
         />
 
-        <div className="my-4 py-2">
+        {/* <div className="my-4 py-2">
           <Button variant="secondary">
             Download Deferment Application Form
           </Button>
-        </div>
+        </div> */}
 
-        <div className="my-4 py-2">
-          {/* <Label>Upload File</Label> */}
+        {/* <div className="my-4 py-2">
           <FormLabel>Upload Deferment Application Form</FormLabel>
           <Input type="file" />
-        </div>
+        </div> */}
+        <br />
 
-        <Button className="text-right" type="submit">
-          Submit
-        </Button>
+        <FormField
+          control={form.control}
+          name="nationality"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Rejection Reasons</FormLabel>
+              <FormControl>
+                {/* <Input type="" placeholder="Nationality" {...field} /> */}
+                {/* <Input
+                  className="bg-gray-100"
+                  disabled
+                  type=""
+                  placeholder="MALAYSIAN"
+                  {...field}
+                /> */}
+                {/* <br /> */}
+
+                {/* nationality */}
+                <Popover open={open} onOpenChange={setOpen}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      className="w-full justify-end"
+                    >
+                      {value
+                        ? reasons.find((reason) => reason.value === value)
+                            ?.label
+                        : ""}
+                      <ChevronsUpDown className="  shrink-0 " />
+                      {/* <span className="w-full text-left"></span> */}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-full p-0">
+                    <Command>
+                      <CommandInput placeholder="Search reason for rejection..." />
+                      <CommandEmpty>No reasons found.</CommandEmpty>
+                      <CommandGroup>
+                        {reasons.map((reason) => (
+                          <CommandItem
+                            key={reason.value}
+                            value={reason.value}
+                            onSelect={(curr) => {
+                              setValue(curr === value ? "" : curr);
+                              setOpen(false);
+                            }}
+                          >
+                            {reason.label}
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+              </FormControl>
+
+              {/* <Button
+                variant="outline"
+                role="combobox"
+                className="w-full justify-end"
+              >
+                <span className="w-full text-left"></span>
+                <ChevronsUpDown className="  shrink-0 " />
+              </Button> */}
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <br />
+        <div className="flex w-full justify-around">
+          <Button
+            variant="destructive"
+            // className="text-right w-full mx-1"
+            className="text-right bg-gray-500 w-full mx-1"
+            type="submit"
+          >
+            {/* Update Application */}
+            Reject
+          </Button>
+          <Button
+            variant="default"
+            className="text-right bg-green-700 w-full mx-1"
+            // className="text-right bg-gray-500 w-full mx-1"
+            type="submit"
+          >
+            {/* Update Application */}
+            Approve
+          </Button>
+        </div>
       </form>
     </Form>
   );

@@ -1,4 +1,5 @@
 import * as z from "zod";
+import axios from "axios";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import {
@@ -12,11 +13,18 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import student_discussing from '../assets/student_discussing.svg';
+import student_discussing from "../assets/student_discussing.svg";
+import { useAuth } from "@/authContext";
+import { useNavigate } from "react-router-dom";
 
 const formSchema = z.object({
-  email: z.string(),
+  email: z
+    .string()
+    .min(1, { message: "Input proper user id or email address" }),
   password: z.string(),
+  // password: z.string().refine((value) => /^[a-zA-Z0-9]{8,16}$/.test(value), {
+  //   message: "Password must be 8 - 16 alphanumeric combination",
+  // }),
 });
 
 function Login() {
@@ -28,19 +36,58 @@ function Login() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-  }
+  const { login } = useAuth();
+  const navigate = useNavigate();
+
+  const getXsrfToken = async () => {
+    try {
+      const response = await axios.get(
+        "https://api.dosas.online/sanctum/csrf-cookie"
+      );
+
+      console.log(response);
+    } catch (error) {
+      console.error("Error fetching XSRF token:", error);
+    }
+  };
+
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    await getXsrfToken();
+
+    try {
+      const response = await axios.post(
+        "https://api.dosas.online/api/login",
+        values,
+        {
+          withCredentials: true,
+          headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        login?.(response.data);
+        navigate("/");
+        // navigate("/home");
+      } else {
+        console.error("Invalid username or password");
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   return (
     <div className="flex mx-auto w-screen h-screen justify-center items-center">
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="flex flex-col border mt-10 mx-5 p-10 w-1/4 space-y-6 text-left rounded-xl shadow-md bgx-red-500"
+          className="flex flex-col border mt-10 mx-5 p-10 w-1/4 space-y-6 text-left rounded-xl shadow-md"
         >
           <span className="text-2xl">Welcome!</span>
-          <span className="text-3xl font-bxold">Sign in to DoSAS</span>
+          <span className="text-3xl font-bold">Sign in to DoSAS</span>
 
           {/* user id/email */}
           <FormField
@@ -94,11 +141,16 @@ function Login() {
 
           <div className="text-center">
             <span className="text-gray-500">Forgot password? </span>
-            <span className="font-bold cursor-pointer">Click here</span>
+            <button
+              className="font-bold"
+              onClick={() => navigate("/login/accountrecovery")}
+            >
+              Click here
+            </button>
           </div>
         </form>
       </Form>
-        <img className="mx-5" src={student_discussing} alt="Student group"/>
+      <img className="mx-5" src={student_discussing} alt="Student group" />
     </div>
   );
 }

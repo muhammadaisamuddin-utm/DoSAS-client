@@ -108,7 +108,7 @@ export const columns: ColumnDef<Application>[] = [
       return (
         <div className="flex space-x-2 justify-center">
           {application.applicationStatus.toString() === "REJECTED" ? (
-            <Button variant="secondary" size="sm">
+            <Button variant="secondary" size="sm" onClick={() => {}}>
               Update application
             </Button>
           ) : (
@@ -117,7 +117,7 @@ export const columns: ColumnDef<Application>[] = [
             </Button>
           )}
 
-          <Button variant="secondary" size="sm">
+          <Button variant="secondary" size="sm" onClick={() => {}}>
             View details
           </Button>
         </div>

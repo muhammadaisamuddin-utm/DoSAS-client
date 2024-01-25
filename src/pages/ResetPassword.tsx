@@ -11,17 +11,30 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
+import { useToast } from "@/components/ui/use-toast";
+import { Toaster } from "@/components/ui/toaster";
+import axios from "axios";
 
-const formSchema = z.object({
-  newPassword: z.string(),
-  confirmPassword: z.string(),
-});
+const formSchema = z
+  .object({
+    newPassword: z.string().min(1),
+    confirmPassword: z.string().min(1),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: " ",
+    path: ["newPassword"],
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "Both field input need to be the same",
+    path: ["confirmPassword"],
+  });
 
-interface resetPasswordProp {
+interface ResetPasswordProp {
   isFirstTime?: boolean;
 }
 
-function ResetPassword({ isFirstTime }: resetPasswordProp) {
+function ResetPassword({ isFirstTime }: Readonly<ResetPasswordProp>) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -30,9 +43,39 @@ function ResetPassword({ isFirstTime }: resetPasswordProp) {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-  }
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    const body = {
+      token: "",
+      userid: "",
+      password: values.newPassword,
+      confirm_password: values.confirmPassword,
+    };
+
+    try {
+      const response = await axios.post(
+        "https://api.dosas.online/api/reset-password",
+        body
+      );
+
+      console.log(response);
+    } catch (error) {
+      console.error(error);
+    }
+
+    toast({
+      variant: "default",
+      description: "Password updated successfully",
+    });
+
+    setTimeout(() => {
+      //redirect
+      navigate("/login");
+    }, 3000);
+  };
+
+  const { toast } = useToast();
+
+  const navigate = useNavigate();
 
   return (
     <Form {...form}>
@@ -81,6 +124,15 @@ function ResetPassword({ isFirstTime }: resetPasswordProp) {
         />
 
         <Button type="submit">Reset password</Button>
+        <Button
+          className="border border-black"
+          variant="secondary"
+          onClick={() => navigate("/login")}
+        >
+          Cancel
+        </Button>
+
+        <Toaster />
       </form>
     </Form>
   );

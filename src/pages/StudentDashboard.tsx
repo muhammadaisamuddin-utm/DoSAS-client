@@ -2,16 +2,19 @@ import Countdown from "@/components/Countdown";
 import Header from "@/components/Header";
 import { columns } from "@/components/applications/studentColumns";
 import { DataTable } from "@/components/applications/datatable";
-import { mockApplications } from "@/test/studentApplications";
 import { Button } from "@/components/ui/button";
 import { User } from "@/types/User";
 import { useNavigate } from "react-router-dom";
 
 interface StudentDashboardProps {
   user?: User | null;
+  applications?: any;
 }
 
-function StudentDashboard({ user }: Readonly<StudentDashboardProps>) {
+function StudentDashboard({
+  user,
+  applications,
+}: Readonly<StudentDashboardProps>) {
   const navigate = useNavigate();
 
   return (
@@ -28,7 +31,7 @@ function StudentDashboard({ user }: Readonly<StudentDashboardProps>) {
       >
         Create a new deferment application
       </Button>
-      <DataTable columns={columns} data={mockApplications} />
+      <DataTable columns={columns} data={applications} />
     </>
   );
 }

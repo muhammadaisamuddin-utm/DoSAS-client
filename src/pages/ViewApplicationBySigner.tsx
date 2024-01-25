@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/command";
 import { cn } from "@/lib/utils";
 import { Textarea } from "@/components/ui/textarea";
+import { useNavigate } from "react-router-dom";
 
 const formSchema = z.object({
   name: z.string(),
@@ -72,16 +73,22 @@ function ViewApplicationBySigner() {
     console.log(values);
   }
 
+  const navigate = useNavigate();
+
   return (
     <Form {...form}>
-      <div className="font-bold p-4 text-center">
-        Student Deferment Application View
-      </div>
-
       <form
         onSubmit={form.handleSubmit(onSubmit)}
         className="space-y-2 flex flex-col flex-wrap w-full max-w-lg justify-center mx-auto mt-2 mb-4"
       >
+        <div className="flex relative items-center">
+          <Button className="z-40 w-20 h-8" onClick={() => navigate(-1)}>
+            Back
+          </Button>
+          <span className="absolute mx-auto w-full text-center font-bold">
+            Student Deferment Application View
+          </span>
+        </div>
         <div className="w-full flex space-x-4 justify-between">
           {/* name */}
           <FormField

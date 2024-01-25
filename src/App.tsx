@@ -1,35 +1,91 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import "./App.css";
+import Login from "./pages/Login";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
+import Dashboard, { applicationLoader } from "./pages/Dashboard";
+import ViewApplicationDetails from "./pages/ViewApplicationDetails";
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import { RequireAuth } from "./RequireAuth";
+import SubmitApplicationForm from "./pages/SubmitApplicationForm";
+import UpdateApplicationForm from "./pages/UpdateApplicationForm";
+import ViewApplicationByStudent from "./pages/ViewApplicationByStudent";
+import ViewApplicationByOfficeAssistant from "./pages/ViewApplicationByOfficeAssistant";
+import ViewApplicationBySigner from "./pages/ViewApplicationBySigner";
+import { AuthProvider } from "./authContext";
+import StudentDashboard from "./pages/StudentDashboard";
+import OfficeAssistantDashboard from "./pages/OfficeAssistantDashboard";
+import SignerDashboard from "./pages/SignerDashboard";
+import { useEffect } from "react";
+import axios from "axios";
+
+const router = createBrowserRouter([
+  {
+    path: "/login",
+    element: <Login />,
+  },
+  {
+    path: "/login/accountrecovery",
+    element: <ForgotPassword />,
+  },
+  {
+    path: "/resetpassword",
+    element: <ResetPassword />,
+  },
+  {
+    path: "/",
+    loader: applicationLoader,
+    element: (
+      <RequireAuth>
+        <Dashboard />
+      </RequireAuth>
+    ),
+  },
+  // {
+  //   path: "/home",
+  //   loader: applicationLoader,
+  //   element: (
+  //     // <RequireAuth>
+  //     <Dashboard />
+  //     // </RequireAuth>
+  //   ),
+  // },
+  {
+    path: "/application",
+    loader: undefined,
+    children: [
+      {
+        // new application (student only)
+        path: "submit",
+        element: <SubmitApplicationForm />,
+      },
+      {
+        // view application (different in roles)
+        path: ":id",
+        element: <ViewApplicationDetails />,
+      },
+      {
+        // update application (student only)
+        path: ":id/update",
+        element: <UpdateApplicationForm />,
+      },
+    ],
+  },
+  {
+    path: "/test",
+    loader: applicationLoader,
+    element: <ViewApplicationByStudent />,
+  },
+]);
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <AuthProvider>
+      <RouterProvider
+        router={router}
+        fallbackElement={<p>Initial Load...</p>}
+      />
+    </AuthProvider>
+  );
 }
 
-export default App
+export default App;

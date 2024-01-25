@@ -11,22 +11,56 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
+import { useToast } from "@/components/ui/use-toast";
+import { Toaster } from "@/components/ui/toaster";
+import axios from "axios";
 
 const formSchema = z.object({
-  email: z.string(),
+  email: z
+    .string()
+    .min(1, { message: "Please input a valid user id or an email" }),
 });
 
 function ForgotPassword() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: "",
+      email: "fkljsd",
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-  }
+  const { toast } = useToast();
+
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    //find email/userid
+    console.log(values)
+
+    //send request
+    // try {
+    //   const response = await axios.post(
+    //     "https://api.dosas.online/api/forgot-password",
+    //     values
+    //   );
+
+    //   console.log(response);
+    // } catch (error) {
+    //   console.error(error);
+    // }
+
+    // //show notification
+    // toast({
+    //   variant: "default",
+    //   description: "An email with further instruction has been sent",
+    // });
+
+    // setTimeout(() => {
+    //   //redirect
+    //   navigate("/");
+    // }, 3000);
+  };
+
+  const navigate = useNavigate();
 
   return (
     <Form {...form}>
@@ -34,7 +68,9 @@ function ForgotPassword() {
         onSubmit={form.handleSubmit(onSubmit)}
         className="flex flex-col border mt-10 mx-auto p-10 w-1/4 space-y-6 text-left rounded-xl shadow-md bgx-red-500"
       >
-        <span className="text-center text-2xl font-bold ">Reset your password</span>
+        <span className="text-center text-2xl font-bold ">
+          Forgot your password
+        </span>
         <span className="">
           Enter a valid email or user id to receive instructions on how to reset
           your password
@@ -48,7 +84,7 @@ function ForgotPassword() {
             <FormItem>
               <FormLabel>User ID or Email</FormLabel>
               <FormControl>
-                <Input placeholder="" {...field} />
+                <Input placeholder=""  disabled />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -56,6 +92,15 @@ function ForgotPassword() {
         />
 
         <Button type="submit">Reset password</Button>
+        <Button
+          className="border border-black"
+          variant="secondary"
+          onClick={() => navigate("/login")}
+        >
+          Go Back
+        </Button>
+
+        <Toaster />
       </form>
     </Form>
   );
