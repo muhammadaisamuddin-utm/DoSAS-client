@@ -11,21 +11,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@radix-ui/react-label";
 import { ChevronsUpDown, Plus } from "lucide-react";
-import { useState } from "react";
-import {
-  PopoverContent,
-  Popover,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-} from "@/components/ui/command";
 import { useNavigate } from "react-router-dom";
 // import { CommandEmpty, CommandInput } from "cmdk";
 
@@ -45,16 +31,16 @@ const formSchema = z.object({
   deferment_history: z.string(),
 });
 
-const reasons = [
-  {
-    value: "Some information in deferment application form is not available",
-    label: "Some information in deferment application form is not available",
-  },
-  { value: "Missing medical report", label: "Missing medical report" },
-  { value: "Missing offical letter", label: "Missing official letter" },
-  { value: "Missing signatures", label: "Missing signatures" },
-  { value: "Others", label: "Others" },
-];
+// const reasons = [
+//   {
+//     value: "Some information in deferment application form is not available",
+//     label: "Some information in deferment application form is not available",
+//   },
+//   { value: "Missing medical report", label: "Missing medical report" },
+//   { value: "Missing offical letter", label: "Missing official letter" },
+//   { value: "Missing signatures", label: "Missing signatures" },
+//   { value: "Others", label: "Others" },
+// ];
 
 function UpdateApplicationForm() {
   const form = useForm<z.infer<typeof formSchema>>({
@@ -63,8 +49,8 @@ function UpdateApplicationForm() {
     defaultValues: {},
   });
 
-  const [open, setOpen] = useState(false);
-  const [value, setValue] = useState("");
+  // const [open, setOpen] = useState(false);
+  // const [value, setValue] = useState("");
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
@@ -229,7 +215,7 @@ function UpdateApplicationForm() {
         <FormField
           control={form.control}
           name="proposal_defense"
-          render={({ field }) => (
+          render={() => (
             <FormItem>
               <FormLabel>Deferment Reason</FormLabel>
               <FormControl>

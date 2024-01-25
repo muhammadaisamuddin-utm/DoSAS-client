@@ -3,9 +3,7 @@ import StudentDashboard from "./StudentDashboard";
 import SignerDashboard from "./SignerDashboard";
 import OfficeAssistantDashboard from "./OfficeAssistantDashboard";
 import { Roles } from "@/enums/Roles";
-import axios from "axios";
 import { useEffect } from "react";
-import { mockApplications as studentApplications } from "@/test/studentApplications";
 import { mockApplications } from "@/test/mockApplications";
 import { useLoaderData } from "react-router-dom";
 
@@ -23,13 +21,12 @@ export async function applicationLoader() {
 
 function Dashboard() {
   const { user } = useAuth();
-  const parsedUser = JSON.parse(user);
+  let parsedUser;
+  if (user != null || user != undefined) parsedUser = JSON.parse(user);
   const role = parsedUser?.role;
   const applications = useLoaderData();
 
   useEffect(() => {
-    console.log(user);
-    console.log(role);
     console.log(applications);
   }, [role, user]);
 

@@ -34,30 +34,30 @@ function ForgotPassword() {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     //find email/userid
-    console.log(values)
+    console.log(values);
 
     //send request
-    // try {
-    //   const response = await axios.post(
-    //     "https://api.dosas.online/api/forgot-password",
-    //     values
-    //   );
+    try {
+      const response = await axios.post(
+        "https://api.dosas.online/api/forgot-password",
+        values
+      );
 
-    //   console.log(response);
-    // } catch (error) {
-    //   console.error(error);
-    // }
+      console.log(response);
+    } catch (error) {
+      console.error(error);
+    }
 
-    // //show notification
-    // toast({
-    //   variant: "default",
-    //   description: "An email with further instruction has been sent",
-    // });
+    //show notification
+    toast({
+      variant: "default",
+      description: "An email with further instruction has been sent",
+    });
 
-    // setTimeout(() => {
-    //   //redirect
-    //   navigate("/");
-    // }, 3000);
+    setTimeout(() => {
+      //redirect
+      navigate("/");
+    }, 3000);
   };
 
   const navigate = useNavigate();
@@ -80,11 +80,11 @@ function ForgotPassword() {
         <FormField
           control={form.control}
           name="email"
-          render={({ field }) => (
+          render={() => (
             <FormItem>
               <FormLabel>User ID or Email</FormLabel>
               <FormControl>
-                <Input placeholder=""  disabled />
+                <Input placeholder="" disabled />
               </FormControl>
               <FormMessage />
             </FormItem>

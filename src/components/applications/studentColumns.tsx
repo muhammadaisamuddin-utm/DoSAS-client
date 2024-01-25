@@ -4,6 +4,41 @@ import { Application } from "@/types/Application";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
+
+function ActionComponent({ application, row }: { application: any; row: any }) {
+  const navigate = useNavigate();
+
+  return (
+    <div className="flex space-x-2 justify-center">
+      {application.applicationStatus.toString() === "REJECTED" ? (
+        <Button
+          variant="secondary"
+          size="sm"
+          onClick={() => {
+            navigate(`/application/${row.id}/update`);
+          }}
+        >
+          Update application
+        </Button>
+      ) : (
+        <Button variant="secondary" size="sm" disabled>
+          Update application
+        </Button>
+      )}
+
+      <Button
+        variant="secondary"
+        size="sm"
+        onClick={() => {
+          navigate(`/application/${row.id}`);
+        }}
+      >
+        View details
+      </Button>
+    </div>
+  );
+}
 
 export const columns: ColumnDef<Application>[] = [
   {
@@ -105,23 +140,31 @@ export const columns: ColumnDef<Application>[] = [
     cell: ({ row }) => {
       const application = row.original;
 
-      return (
-        <div className="flex space-x-2 justify-center">
-          {application.applicationStatus.toString() === "REJECTED" ? (
-            <Button variant="secondary" size="sm" onClick={() => {}}>
-              Update application
-            </Button>
-          ) : (
-            <Button variant="secondary" size="sm" disabled>
-              Update application
-            </Button>
-          )}
+      return <ActionComponent application={application} row={row} />;
+      // return (
+      //   <div className="flex space-x-2 justify-center">
+      //     {application.applicationStatus.toString() === "REJECTED" ? (
+      //       <Button variant="secondary" size="sm" onClick={() => {}}>
+      //         Update application
+      //       </Button>
+      //     ) : (
+      //       <Button variant="secondary" size="sm" disabled>
+      //         Update application
+      //       </Button>
+      //     )}
 
-          <Button variant="secondary" size="sm" onClick={() => {}}>
-            View details
-          </Button>
-        </div>
-      );
+      //     <Button
+      //       variant="secondary"
+      //       size="sm"
+      //       onClick={() => {
+      //         console.log(row.id);
+      //         // "/applications/{row.id}"
+      //       }}
+      //     >
+      //       View details
+      //     </Button>
+      //   </div>
+      // );
     },
   },
 ];

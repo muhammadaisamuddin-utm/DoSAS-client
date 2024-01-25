@@ -11,26 +11,11 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@radix-ui/react-label";
-import { ChevronsUpDown, Plus } from "lucide-react";
-import { useState } from "react";
-import {
-  PopoverContent,
-  Popover,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-} from "@/components/ui/command";
+import { Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/authContext";
-import { parse } from "path";
-import { Select } from "@/components/ui/select";
 import {
+  Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
@@ -69,7 +54,9 @@ const reasons = [
 
 function SubmitApplicationForm() {
   const { user } = useAuth();
-  const parsedUser = JSON.parse(user);
+
+  let parsedUser:any;
+  if (user != null || user != undefined) parsedUser = JSON.parse(user);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -86,8 +73,8 @@ function SubmitApplicationForm() {
     },
   });
 
-  const [open, setOpen] = useState(false);
-  const [value, setValue] = useState("");
+  // const [open, setOpen] = useState(false);
+  // const [value, setValue] = useState("");
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
@@ -274,8 +261,13 @@ function SubmitApplicationForm() {
                 /> */}
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="health">health</SelectItem>
-                  <SelectItem value="war">war</SelectItem>
+                  {reasons.map((reason, index) => {
+                    return (
+                      <SelectItem key={index} value={reason.value}>
+                        {reason.label}
+                      </SelectItem>
+                    );
+                  })}
                 </SelectContent>
               </Select>
               {/* <Button

@@ -5,7 +5,11 @@ import ViewApplicationBySigner from "./ViewApplicationBySigner";
 
 function ViewApplicationDetails() {
   const { user } = useAuth();
-  const role = user?.role;
+
+  let parsedUser: any;
+  if (user != null || user != undefined) parsedUser = JSON.parse(user);
+
+  const role = parsedUser?.role;
 
   return (
     <>

@@ -11,8 +11,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@radix-ui/react-label";
-import { ChevronsUpDown, Plus } from "lucide-react";
+import { ChevronsUpDown } from "lucide-react";
 import { useState } from "react";
 import {
   PopoverContent,
@@ -26,7 +25,6 @@ import {
   CommandInput,
   CommandItem,
 } from "@/components/ui/command";
-// import { CommandEmpty, CommandInput } from "cmdk";
 
 const formSchema = z.object({
   name: z.string(),
@@ -438,7 +436,7 @@ function ApplicationForm() {
         <FormField
           control={form.control}
           name="nationality"
-          render={({ field }) => (
+          render={() => (
             <FormItem>
               <FormLabel>Rejection Reasons</FormLabel>
               <FormControl>

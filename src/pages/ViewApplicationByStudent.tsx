@@ -11,22 +11,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Check, ChevronsUpDown } from "lucide-react";
-import { useState } from "react";
-import {
-  PopoverContent,
-  Popover,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-} from "@/components/ui/command";
-import { cn } from "@/lib/utils";
-import { Textarea } from "@/components/ui/textarea";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/authContext";
 
@@ -46,24 +30,26 @@ const formSchema = z.object({
   deferment_history: z.string(),
 });
 
-const reasons = [
-  {
-    value: "",
-    label: "None",
-  },
-  {
-    value: "some information in deferment application form is not available",
-    label: "Some information in deferment application form is not available",
-  },
-  { value: "missing medical report", label: "Missing medical report" },
-  { value: "missing offical letter", label: "Missing official letter" },
-  { value: "missing signatures", label: "Missing signatures" },
-  { value: "others", label: "Others" },
-];
+// const reasons = [
+//   {
+//     value: "",
+//     label: "None",
+//   },
+//   {
+//     value: "some information in deferment application form is not available",
+//     label: "Some information in deferment application form is not available",
+//   },
+//   { value: "missing medical report", label: "Missing medical report" },
+//   { value: "missing offical letter", label: "Missing official letter" },
+//   { value: "missing signatures", label: "Missing signatures" },
+//   { value: "others", label: "Others" },
+// ];
 
 function ViewApplicationByStudent() {
   const { user } = useAuth();
-  const parsedUser = JSON.parse(user);
+
+  let parsedUser: any;
+  if (user != null || user != undefined) parsedUser = JSON.parse(user);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -79,8 +65,8 @@ function ViewApplicationByStudent() {
     },
   });
 
-  const [open, setOpen] = useState(false);
-  const [value, setValue] = useState("");
+  // const [open, setOpen] = useState(false);
+  // const [value, setValue] = useState("");
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);

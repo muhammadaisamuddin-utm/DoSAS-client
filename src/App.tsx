@@ -9,14 +9,7 @@ import { RequireAuth } from "./RequireAuth";
 import SubmitApplicationForm from "./pages/SubmitApplicationForm";
 import UpdateApplicationForm from "./pages/UpdateApplicationForm";
 import ViewApplicationByStudent from "./pages/ViewApplicationByStudent";
-import ViewApplicationByOfficeAssistant from "./pages/ViewApplicationByOfficeAssistant";
-import ViewApplicationBySigner from "./pages/ViewApplicationBySigner";
 import { AuthProvider } from "./authContext";
-import StudentDashboard from "./pages/StudentDashboard";
-import OfficeAssistantDashboard from "./pages/OfficeAssistantDashboard";
-import SignerDashboard from "./pages/SignerDashboard";
-import { useEffect } from "react";
-import axios from "axios";
 
 const router = createBrowserRouter([
   {

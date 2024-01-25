@@ -2,12 +2,8 @@ import {
   ReactNode,
   createContext,
   useContext,
-  useEffect,
-  useMemo,
   useState,
 } from "react";
-import { User } from "./types/User";
-import { Roles } from "./enums/Roles";
 
 interface AuthContextType {
   user?: string | null;
