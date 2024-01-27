@@ -42,20 +42,20 @@ function Login() {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  // const getXsrfToken = async () => {
-  //   try {
-  //     const response = await axios.get(
-  //       "https://api.dosas.online/sanctum/csrf-cookie"
-  //     );
+  const getXsrfToken = async () => {
+    try {
+      const response = await axios.get(
+        "https://api.dosas.online/sanctum/csrf-cookie"
+      );
 
-  //     console.log(response);
-  //   } catch (error) {
-  //     console.error("Error fetching XSRF token:", error);
-  //   }
-  // };
+      console.log(response);
+    } catch (error) {
+      console.error("Error fetching XSRF token:", error);
+    }
+  };
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    // await getXsrfToken();
+    await getXsrfToken();
 
     try {
       const response = await axios.post(
