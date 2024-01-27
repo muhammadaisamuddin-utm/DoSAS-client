@@ -12,19 +12,24 @@ export async function applicationLoader() {
   // return mockApplications;
 
   const response = await axios.get(
-    "https://api.dosas.online/api/deferment-applications",
+    // "https://api.dosas.online/api/deferment-applications",
+    "http://localhost:8000/api/deferment-applications",
     { withCredentials: true }
   );
 
-  const { deferment_applications }: any = response;
+  console.log(response);
+  const { deferment_applications }: any = response.data;
+  console.log(deferment_applications);
   return deferment_applications;
 }
 
 function Dashboard() {
   const { user } = useAuth();
+
   let parsedUser;
   if (user != null || user != undefined) parsedUser = JSON.parse(user);
   const role = parsedUser?.role;
+
   const applications = useLoaderData();
 
   useEffect(() => {

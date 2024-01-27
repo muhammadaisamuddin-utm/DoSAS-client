@@ -1,7 +1,7 @@
 export interface User {
   name: string;
-  email: string;
   userid: string;
+  email: string;
   role: string;
   faculty_name: string;
   faculty_code: string;
@@ -14,4 +14,5 @@ export interface User {
   proposal_defence_status: boolean;
   nht_completion_status: boolean;
   supervisor: string;
+  logged_in: string;
 }

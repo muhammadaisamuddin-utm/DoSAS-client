@@ -1,10 +1,10 @@
 import { Application } from "@/types/Application";
 import { ApplicationStatus } from "@/enums/ApplicationStatus";
 
-export const mockApplications: Application[] = [
+export const mockApplications: any[] = [
   {
-    studentId: "MAN221001",
-    fullName: "Alizzz bin Abu",
+    userid: "MAN221001",
+    name: "Alizzz bin Abu",
     email: "ali@graduate.utm.my",
     applicationStatus: ApplicationStatus.APPROVED,
     studentFaculty: "RAZAK FACULTY",
@@ -12,8 +12,8 @@ export const mockApplications: Application[] = [
     programName: "MASTER OF SOFTWARE ENGINEERING",
   },
   {
-    studentId: "MAN221002",
-    fullName: "Bakar bin Bakhtiar",
+    userid: "MAN221002",
+    name: "Bakar bin Bakhtiar",
     email: "bakar@graduatezzz.utm.my",
     applicationStatus: ApplicationStatus.REJECTED,
     studentFaculty: "RAZAK FACULTY",
@@ -21,8 +21,8 @@ export const mockApplications: Application[] = [
     programName: "MASTER OF SOFTWARE ENGINEERING",
   },
   {
-    studentId: "MAN221003",
-    fullName: "Changzzz Chen",
+    userid: "MAN221003",
+    name: "Changzzz Chen",
     email: "chang@gzzzraduate.utm.my",
     applicationStatus: ApplicationStatus.APPROVED,
     studentFaculty: "RAZAK FACULTY",
@@ -30,8 +30,8 @@ export const mockApplications: Application[] = [
     programName: "MASTER OF SOFTWARE ENGINEERING",
   },
   {
-    studentId: "MAN221004",
-    fullName: "Faiz bin Farid",
+    userid: "MAN221004",
+    name: "Faiz bin Farid",
     email: "faiz@graduate.utm.my",
     applicationStatus: ApplicationStatus.PENDING,
     studentFaculty: "RAZAK FACULTY",
@@ -39,8 +39,8 @@ export const mockApplications: Application[] = [
     programName: "MASTER OF SOFTWARE ENGINEERING",
   },
   {
-    studentId: "MAN221005",
-    fullName: "Darwich bin Daud",
+    userid: "MAN221005",
+    name: "Darwich bin Daud",
     email: "darwich@graduate.utm.my",
     applicationStatus: ApplicationStatus.PENDING,
     studentFaculty: "RAZAK FACULTY",
@@ -48,8 +48,8 @@ export const mockApplications: Application[] = [
     programName: "MASTER OF SOFTWARE ENGINEERING",
   },
   {
-    studentId: "MAN221006",
-    fullName: "Graham Bell",
+    userid: "MAN221006",
+    name: "Graham Bell",
     email: "graham@graduate.utm.my",
     applicationStatus: ApplicationStatus.PENDING,
     studentFaculty: "RAZAK FACULTY",
@@ -57,8 +57,8 @@ export const mockApplications: Application[] = [
     programName: "MASTER OF SOFTWARE ENGINEERING",
   },
   {
-    studentId: "MAN221007",
-    fullName: "Haniffah binti Hanifa",
+    userid: "MAN221007",
+    name: "Haniffah binti Hanifa",
     email: "haniffah@graduate.utm.my",
     applicationStatus: ApplicationStatus.PENDING,
     studentFaculty: "RAZAK FACULTY",
@@ -66,8 +66,8 @@ export const mockApplications: Application[] = [
     programName: "MASTER OF SOFTWARE ENGINEERING",
   },
   {
-    studentId: "MAN221008",
-    fullName: "Jauhari bin Manikam",
+    userid: "MAN221008",
+    name: "Jauhari bin Manikam",
     email: "jauhari@graduate.utm.my",
     applicationStatus: ApplicationStatus.PENDING,
     studentFaculty: "RAZAK FACULTY",
@@ -75,8 +75,8 @@ export const mockApplications: Application[] = [
     programName: "MASTER OF SOFTWARE ENGINEERING",
   },
   {
-    studentId: "MAN221009",
-    fullName: "Kelvin Celcius",
+    userid: "MAN221009",
+    name: "Kelvin Celcius",
     email: "kelvin@graduate.utm.my",
     applicationStatus: ApplicationStatus.PENDING,
     studentFaculty: "RAZAK FACULTY",
@@ -84,8 +84,8 @@ export const mockApplications: Application[] = [
     programName: "MASTER OF SOFTWARE ENGINEERING",
   },
   {
-    studentId: "MAN221010",
-    fullName: "Lew Lau",
+    userid: "MAN221010",
+    name: "Lew Lau",
     email: "lew@graduate.utm.my",
     applicationStatus: ApplicationStatus.PENDING,
     studentFaculty: "RAZAK FACULTY",
@@ -93,8 +93,8 @@ export const mockApplications: Application[] = [
     programName: "MASTER OF SOFTWARE ENGINEERING",
   },
   {
-    studentId: "MAN221011",
-    fullName: "Muthusamy Sivaraju",
+    userid: "MAN221011",
+    name: "Muthusamy Sivaraju",
     email: "muthusamy@graduate.utm.my",
     applicationStatus: ApplicationStatus.PENDING,
     studentFaculty: "RAZAK FACULTY",
@@ -102,8 +102,8 @@ export const mockApplications: Application[] = [
     programName: "MASTER OF SOFTWARE ENGINEERING",
   },
   {
-    studentId: "MAN221012",
-    fullName: "Nur Nami binti Nun",
+    userid: "MAN221012",
+    name: "Nur Nami binti Nun",
     email: "nurnami@graduate.utm.my",
     applicationStatus: ApplicationStatus.PENDING,
     studentFaculty: "RAZAK FACULTY",
@@ -111,8 +111,8 @@ export const mockApplications: Application[] = [
     programName: "MASTER OF SOFTWARE ENGINEERING",
   },
   {
-    studentId: "MAN221013",
-    fullName: "Oren bin Jingga",
+    userid: "MAN221013",
+    name: "Oren bin Jingga",
     email: "oren@graduate.utm.my",
     applicationStatus: ApplicationStatus.PENDING,
     studentFaculty: "RAZAK FACULTY",
@@ -120,8 +120,8 @@ export const mockApplications: Application[] = [
     programName: "MASTER OF SOFTWARE ENGINEERING",
   },
   {
-    studentId: "MAN221014",
-    fullName: "Padparascha Papadom",
+    userid: "MAN221014",
+    name: "Padparascha Papadom",
     email: "padparascha@graduate.utm.my",
     applicationStatus: ApplicationStatus.PENDING,
     studentFaculty: "RAZAK FACULTY",
@@ -129,8 +129,8 @@ export const mockApplications: Application[] = [
     programName: "MASTER OF SOFTWARE ENGINEERING",
   },
   {
-    studentId: "MAN221015",
-    fullName: "Zeus Zhang",
+    userid: "MAN221015",
+    name: "Zeus Zhang",
     email: "zeus@graduate.utm.my",
     applicationStatus: ApplicationStatus.PENDING,
     studentFaculty: "RAZAK FACULTY",

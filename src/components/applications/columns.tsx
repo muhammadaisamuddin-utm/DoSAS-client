@@ -6,7 +6,7 @@ import { ArrowUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 
-function ActionComponent({ row }: {  row: any }) {
+function ActionComponent({ row }: Readonly<{  row: any }>) {
   const navigate = useNavigate();
 
   return (
@@ -49,11 +49,11 @@ export const columns: ColumnDef<Application>[] = [
     },
     cell: ({ row }) => {
       const application = row.original;
-      return <span className="block text-center">{application.studentId}</span>;
+      return <span className="block text-center">{application.userid}</span>;
     },
   },
   {
-    accessorKey: "fullName",
+    accessorKey: "name",
     header: ({ column }) => {
       return (
         <Button
@@ -96,7 +96,7 @@ export const columns: ColumnDef<Application>[] = [
     cell: ({ row }) => {
       const application = row.original;
       return (
-        <span className="block text-center">{application.studentFaculty}</span>
+        <span className="block text-center">{application.faculty_name}</span>
       );
     },
   },
@@ -116,7 +116,7 @@ export const columns: ColumnDef<Application>[] = [
     cell: ({ row }) => {
       const application = row.original;
       return (
-        <span className="block text-center">{application.programCode}</span>
+        <span className="block text-center">{application.program_code}</span>
       );
     },
   },
@@ -136,7 +136,7 @@ export const columns: ColumnDef<Application>[] = [
     cell: ({ row }) => {
       const application = row.original;
       return (
-        <span className="block text-center">{application.programName}</span>
+        <span className="block text-center">{application.program_name}</span>
       );
     },
   },
@@ -155,31 +155,31 @@ export const columns: ColumnDef<Application>[] = [
     },
     cell: ({ row }) => {
       const application = row.original;
-      switch (application.applicationStatus.toString()) {
+      switch (application.status.toString()) {
         case "REJECTED":
           return (
             <span className="block text-center font-bold text-red-500">
-              {application.applicationStatus.toString()}
+              {application.status.toString()}
             </span>
           );
 
         case "PENDING":
           return (
             <span className="block text-center font-bold text-blue-500">
-              {application.applicationStatus.toString()}
+              {application.status.toString()}
             </span>
           );
 
         case "APPROVED":
           return (
             <span className="block text-center font-bold text-green-500">
-              {application.applicationStatus.toString()}
+              {application.status.toString()}
             </span>
           );
         default:
           return (
             <span className="block text-center font-bold ">
-              {application.applicationStatus.toString()}
+              {application.status.toString()}
             </span>
           );
       }
@@ -189,8 +189,6 @@ export const columns: ColumnDef<Application>[] = [
     id: "actions",
     header: "Actions",
     cell: ({ row }) => {
-      // const application = row.original;
-
       return <ActionComponent row={row} />;
     },
   },

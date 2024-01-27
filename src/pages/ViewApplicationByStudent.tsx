@@ -139,7 +139,7 @@ function ViewApplicationByStudent() {
                   <Input
                     disabled
                     className="bg-gray-100 font-bold"
-                    value={application.identity_no}
+                    value={application.userid}
                   />
                 </FormControl>
                 <FormMessage />
@@ -149,7 +149,6 @@ function ViewApplicationByStudent() {
         </div>
 
         <div className="w-full flex space-x-2 justify-between">
-          {/* name */}
           {/* program_code */}
           <div className="w-1/4">
             <FormField
