@@ -12,21 +12,10 @@ import ViewApplicationByStudent from "./pages/ViewApplicationByStudent";
 import { AuthProvider } from "./authContext";
 // import ViewApplicationByOfficeAssistant from "./pages/ViewApplicationByOfficeAssistant";
 import LandingPage from "./pages/LandingPage";
+import Test from "./pages/Test";
 // import ManageApplicationByOfficeAssistant from "./pages/ManageApplicationByOfficeAssistant";
 
 const router = createBrowserRouter([
-  {
-    path: "/login",
-    element: <Login />,
-  },
-  {
-    path: "/login/accountrecovery",
-    element: <ForgotPassword />,
-  },
-  {
-    path: "/resetpassword",
-    element: <ResetPassword />,
-  },
   {
     path: "/",
     element: <LandingPage />,
@@ -41,6 +30,22 @@ const router = createBrowserRouter([
     ),
   },
   {
+    path: "/login",
+    element: <Login />,
+  },
+  {
+    path: "/login/accountrecovery",
+    element: <ForgotPassword />,
+  },
+  {
+    path: "/password-reset/first-time",
+    element: <ResetPassword isFirstTime/>,
+  },
+  {
+    path: "/password-reset/:token",
+    element: <ResetPassword />,
+  },
+  {
     path: "/application",
     loader: undefined,
     children: [
@@ -52,6 +57,7 @@ const router = createBrowserRouter([
       {
         // view application (different in roles)
         path: ":id",
+        loader: applicationLoader,
         element: <ViewApplicationDetails />,
       },
       {

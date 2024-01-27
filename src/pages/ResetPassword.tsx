@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import { Toaster } from "@/components/ui/toaster";
 import axios from "axios";
@@ -27,7 +27,7 @@ const formSchema = z
   })
   .refine((data) => data.newPassword === data.confirmPassword, {
     message: "Password does not match",
-    path: ["confirmPassword"]
+    path: ["confirmPassword"],
   });
 
 interface ResetPasswordProp {
@@ -35,6 +35,11 @@ interface ResetPasswordProp {
 }
 
 function ResetPassword({ isFirstTime }: Readonly<ResetPasswordProp>) {
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const email = searchParams.get("email");
+  const { token } = useParams();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -45,8 +50,8 @@ function ResetPassword({ isFirstTime }: Readonly<ResetPasswordProp>) {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     const body = {
-      token: "",
-      userid: "",
+      token: token,
+      userid: email,
       password: values.newPassword,
       confirm_password: values.confirmPassword,
     };
@@ -54,7 +59,8 @@ function ResetPassword({ isFirstTime }: Readonly<ResetPasswordProp>) {
     try {
       const response = await axios.post(
         "https://api.dosas.online/api/reset-password",
-        body
+        body,
+        { withCredentials: true }
       );
 
       console.log(response);

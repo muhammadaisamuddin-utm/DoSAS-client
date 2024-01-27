@@ -60,14 +60,15 @@ function Login() {
     try {
       const response = await axios.post(
         "https://api.dosas.online/api/login",
+        // "http://localhost:8000/api/login",
         values,
-        // {
-        //   withCredentials: true,
-        //   headers: {
-        //     "Access-Control-Allow-Origin": "*",
-        //     "Content-Type": "application/json",
-        //   },
-        // }
+        {
+          withCredentials: true,
+          // headers: {
+          //   "Access-Control-Allow-Origin": "*",
+          //   "Content-Type": "application/json",
+          // },
+        }
       );
 
       if (response.status === 200) {

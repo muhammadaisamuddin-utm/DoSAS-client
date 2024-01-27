@@ -11,9 +11,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useNavigate, useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { useLoaderData, useNavigate, useParams } from "react-router-dom";
 
 const formSchema = z.object({
   name: z.string(),
@@ -33,8 +31,9 @@ const formSchema = z.object({
 
 function ViewApplicationByStudent() {
   let { id } = useParams();
-
-  const [application, setApplication] = useState<any>();
+  const applications: any = useLoaderData();
+  let application: any;
+  if (id) application = applications[id];
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -50,30 +49,11 @@ function ViewApplicationByStudent() {
     },
   });
 
-  const getApplication = async () => {
-    try {
-      const response: any = await axios.get(
-        "https://api.dosas.online/api/deferment-applications",
-        {
-          withCredentials: true,
-        }
-      );
-
-      if (id) setApplication(response.deferment_applications[id]);
-    } catch (e) {
-      console.error(e);
-    }
-  };
-
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
   }
 
   const navigate = useNavigate();
-
-  useEffect(() => {
-    getApplication();
-  }, []);
 
   return (
     <Form {...form}>
@@ -82,7 +62,13 @@ function ViewApplicationByStudent() {
         className="space-y-2 flex flex-col flex-wrap w-full max-w-lg justify-center mx-auto mt-2 mb-4"
       >
         <div className="flex relative items-center">
-          <Button className="z-40 w-20 h-8" onClick={() => navigate("/home")}>
+          <Button
+            className="z-40 w-20 h-8"
+            onClick={(e) => {
+              e.preventDefault();
+              navigate("/home");
+            }}
+          >
             Back
           </Button>
           <span className="absolute mx-auto w-full text-center font-bold">
@@ -139,7 +125,7 @@ function ViewApplicationByStudent() {
                   <Input
                     disabled
                     className="bg-gray-100 font-bold"
-                    value={application.identity_no}
+                    value={application.userid}
                   />
                 </FormControl>
                 <FormMessage />
@@ -149,7 +135,6 @@ function ViewApplicationByStudent() {
         </div>
 
         <div className="w-full flex space-x-2 justify-between">
-          {/* name */}
           {/* program_code */}
           <div className="w-1/4">
             <FormField
@@ -201,7 +186,7 @@ function ViewApplicationByStudent() {
                   <Input
                     disabled
                     className="bg-gray-100 font-bold"
-                    value={application.faculty}
+                    value={application.faculty_name}
                   />
                   <FormMessage />
                 </FormItem>
@@ -220,7 +205,8 @@ function ViewApplicationByStudent() {
                   <Input
                     disabled
                     className="bg-gray-100 font-bold"
-                    value={application.current_semester}
+                    value={application.semester_name}
+                    // value={application.semester_status}
                   />
                   <FormMessage />
                 </FormItem>
@@ -259,7 +245,7 @@ function ViewApplicationByStudent() {
                 <Input
                   disabled
                   className="bg-gray-100 font-bold"
-                  value={application.main_supervisor}
+                  value={application.supervisor}
                 />
               </FormControl>
               <FormMessage />
@@ -318,7 +304,7 @@ function ViewApplicationByStudent() {
                 <Input
                   disabled
                   className="bg-gray-100 font-bold"
-                  value={application.proposal_defense}
+                  value={application.proposal_defense_status}
                 />
               </FormControl>
               <FormMessage />
@@ -347,7 +333,10 @@ function ViewApplicationByStudent() {
 
         <Button
           className="text-right w-full mx-1"
-          onClick={() => navigate("/home")}
+          onClick={(e) => {
+            e.preventDefault();
+            navigate("/home");
+          }}
         >
           Go Back
         </Button>

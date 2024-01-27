@@ -11,7 +11,7 @@ function LandingPage() {
 
   if (token && user) {
     // return <Navigate to="/home" state={{ from: location }} replace />;
-    return <Navigate to="/home" />;
+    return <Navigate to="/home" replace/>;
   }
 
   return (
