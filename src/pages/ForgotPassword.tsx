@@ -22,7 +22,6 @@ const formSchema = z.object({
     .min(1, { message: "Please input a valid user id or an email" }),
 });
 
-
 function ForgotPassword() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -41,7 +40,8 @@ function ForgotPassword() {
     try {
       const response = await axios.post(
         "https://api.dosas.online/api/forgot-password",
-        values
+        values,
+        { withCredentials: true }
       );
 
       console.log(response);

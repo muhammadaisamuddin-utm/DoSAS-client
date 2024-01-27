@@ -3,17 +3,14 @@ import StudentDashboard from "./StudentDashboard";
 import SignerDashboard from "./SignerDashboard";
 import OfficeAssistantDashboard from "./OfficeAssistantDashboard";
 import { Roles } from "@/enums/Roles";
-import { useEffect } from "react";
-// import { mockApplications } from "@/test/mockApplications";
-import { useLoaderData } from "react-router-dom";
+import { useLoaderData, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useEffect } from "react";
 
 export async function applicationLoader() {
-  // return mockApplications;
-
   const response = await axios.get(
-    // "https://api.dosas.online/api/deferment-applications",
-    "http://localhost:8000/api/deferment-applications",
+    "https://api.dosas.online/api/deferment-applications",
+    // "http://localhost:8000/api/deferment-applications",
     { withCredentials: true }
   );
 
@@ -26,15 +23,20 @@ export async function applicationLoader() {
 function Dashboard() {
   const { user } = useAuth();
 
+  const navigate = useNavigate();
+
   let parsedUser;
   if (user != null || user != undefined) parsedUser = JSON.parse(user);
   const role = parsedUser?.role;
-
-  const applications = useLoaderData();
+  const hasLoggedIn = parsedUser?.has_logged_in;
 
   useEffect(() => {
-    console.log(applications);
-  }, [role, user]);
+    if (!hasLoggedIn) {
+      navigate("/password-reset/first-time");
+    }
+  }, []);
+
+  const applications = useLoaderData();
 
   return (
     <>

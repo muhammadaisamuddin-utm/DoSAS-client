@@ -96,15 +96,14 @@ function SubmitApplicationForm() {
       formData.append("others", values.other);
       formData.append("pdf_form", values.pdf_file);
 
-      // const response = await axios.post(
-      //   // "https://api.dosas.online/api/deferment-application",
-      //   "http//localhost:8000/api/deferment-application",
-      //   formData
-      // );
-      // console.log(response);
-
+      const response = await axios.post(
+        "https://api.dosas.online/api/deferment-application",
+        // "http//localhost:8000/api/deferment-application",
+        formData,
+        { withCredentials: true }
+      );
+      console.log(response);
       console.log(values);
-      // console.log(formData.getAll("pdf_form"));
     } catch (error) {
       console.error(error);
     }
@@ -112,18 +111,24 @@ function SubmitApplicationForm() {
 
   return (
     <Form {...form}>
-      <div className="flex relative items-center">
-        <Button className="z-40 w-20 h-8" onClick={() => navigate("/home")}>
-          Back
-        </Button>
-        <span className="absolute mx-auto w-full text-center font-bold">
-          Submit Student Deferment Application
-        </span>
-      </div>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
         className="space-y-2 flex flex-col flex-wrap w-full max-w-lg justify-center mx-auto mt-2 mb-4"
       >
+        <div className="flex relative items-center">
+          <Button
+            className="z-40 w-20 h-8"
+            onClick={(e) => {
+              e.preventDefault();
+              navigate("/home");
+            }}
+          >
+            Back
+          </Button>
+          <span className="absolute mx-auto w-full text-center font-bold">
+            Submit Student Deferment Application
+          </span>
+        </div>
         <div className="w-full flex space-x-4 justify-between">
           {/* name */}
           <FormField

@@ -26,7 +26,6 @@ const router = createBrowserRouter([
     element: (
       <RequireAuth>
         <Dashboard />
-        {/* <Test/> */}
       </RequireAuth>
     ),
   },
@@ -38,12 +37,12 @@ const router = createBrowserRouter([
     path: "/login/accountrecovery",
     element: <ForgotPassword />,
   },
-  // {
-  //   path: "/resetpassword",
-  //   element: <ResetPassword />,
-  // },
   {
-    path: "/resetpassword",
+    path: "/password-reset/first-time",
+    element: <ResetPassword isFirstTime/>,
+  },
+  {
+    path: "/password-reset/:token",
     element: <ResetPassword />,
   },
   {
@@ -58,6 +57,7 @@ const router = createBrowserRouter([
       {
         // view application (different in roles)
         path: ":id",
+        loader: applicationLoader,
         element: <ViewApplicationDetails />,
       },
       {
