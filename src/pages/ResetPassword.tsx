@@ -26,8 +26,8 @@ const formSchema = z
     path: ["newPassword"],
   })
   .refine((data) => data.newPassword === data.confirmPassword, {
-    message: "Both field input need to be the same",
-    path: ["confirmPassword"],
+    message: "Password does not match",
+    path: ["confirmPassword"]
   });
 
 interface ResetPasswordProp {

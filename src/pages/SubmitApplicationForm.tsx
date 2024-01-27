@@ -42,20 +42,20 @@ const formSchema = z.object({
 });
 
 const reasons = [
-  {
-    value: "Some information in deferment application form is not available",
-    label: "Some information in deferment application form is not available",
-  },
-  { value: "Missing medical report", label: "Missing medical report" },
-  { value: "Missing offical letter", label: "Missing official letter" },
-  { value: "Missing signatures", label: "Missing signatures" },
-  { value: "Others", label: "Others" },
+  { value: "country/university reasons", label: "Country/University Reasons" },
+  { value: "natural disaster", label: "Natural Disaster" },
+  { value: "war", label: "War" },
+  { value: "financial problems", label: "Financial Problems" },
+  { value: "personal problems", label: "Personal Problems" },
+  { value: "work commitment", label: "Work Commitment" },
+  { value: "health problems", label: "Health Problems" },
+  { value: "others", label: "Others" },
 ];
 
 function SubmitApplicationForm() {
   const { user } = useAuth();
 
-  let parsedUser:any;
+  let parsedUser: any;
   if (user != null || user != undefined) parsedUser = JSON.parse(user);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -78,6 +78,9 @@ function SubmitApplicationForm() {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
+      // const formData = new FormData();
+      // formData.append("name", values.name);
+
       const response = await axios.post(
         "https://api.dosas.online/api/deferment-application",
         values
@@ -97,7 +100,7 @@ function SubmitApplicationForm() {
         className="space-y-2 flex flex-col flex-wrap w-full max-w-lg justify-center mx-auto mt-2 mb-4"
       >
         <div className="flex relative items-center">
-          <Button className="z-40 w-20 h-8" onClick={() => navigate("/")}>
+          <Button className="z-40 w-20 h-8" onClick={() => navigate("/home")}>
             Back
           </Button>
           <span className="absolute mx-auto w-full text-center font-bold">
@@ -347,7 +350,7 @@ function SubmitApplicationForm() {
               <FormControl>
                 <Input className="" placeholder="" {...field} />
               </FormControl>
-              <FormMessage />
+              {/* <FormMessage /> */}
             </FormItem>
           )}
         />

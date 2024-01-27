@@ -60,7 +60,7 @@ const reasons = [
   { value: "others", label: "Others" },
 ];
 
-function ViewApplicationByOfficeAssistant() {
+function ManageApplicationByOfficeAssistant() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {},
@@ -82,7 +82,7 @@ function ViewApplicationByOfficeAssistant() {
         className="space-y-2 flex flex-col flex-wrap w-full max-w-lg justify-center mx-auto mt-2 mb-4"
       >
         <div className="flex relative items-center">
-          <Button className="z-40 w-20 h-8" onClick={() => navigate(-1)}>
+          <Button className="z-40 w-20 h-8" onClick={() => navigate("/home")}>
             Back
           </Button>
           <span className="absolute mx-auto w-full text-center font-bold">
@@ -474,4 +474,4 @@ function ViewApplicationByOfficeAssistant() {
   );
 }
 
-export default ViewApplicationByOfficeAssistant;
+export default ManageApplicationByOfficeAssistant;

@@ -4,19 +4,20 @@ import SignerDashboard from "./SignerDashboard";
 import OfficeAssistantDashboard from "./OfficeAssistantDashboard";
 import { Roles } from "@/enums/Roles";
 import { useEffect } from "react";
-import { mockApplications } from "@/test/mockApplications";
+// import { mockApplications } from "@/test/mockApplications";
 import { useLoaderData } from "react-router-dom";
+import axios from "axios";
 
 export async function applicationLoader() {
-  return mockApplications;
+  // return mockApplications;
 
-  // const response = await axios.get(
-  //   "https://api.dosas.online/api/deferment-applications",
-  //   { withCredentials: true }
-  // );
+  const response = await axios.get(
+    "https://api.dosas.online/api/deferment-applications",
+    { withCredentials: true }
+  );
 
-  // const { deferment_applications }: any = response;
-  // return deferment_applications;
+  const { deferment_applications }: any = response;
+  return deferment_applications;
 }
 
 function Dashboard() {

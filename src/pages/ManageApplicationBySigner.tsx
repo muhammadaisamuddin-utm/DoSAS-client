@@ -11,12 +11,26 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useNavigate, useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { Check, ChevronsUpDown } from "lucide-react";
+import { useState } from "react";
+import {
+  PopoverContent,
+  Popover,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+} from "@/components/ui/command";
+import { cn } from "@/lib/utils";
+import { Textarea } from "@/components/ui/textarea";
+import { useNavigate } from "react-router-dom";
 
 const formSchema = z.object({
-  name: z.string(),
+  name: z.string().min(0),
   nric: z.string(),
   student_id: z.string(),
   program_code: z.string(),
@@ -31,49 +45,35 @@ const formSchema = z.object({
   deferment_history: z.string(),
 });
 
-function ViewApplicationByStudent() {
-  let { id } = useParams();
+const reasons = [
+  {
+    value: "",
+    label: "None",
+  },
+  {
+    value: "some information in deferment application form is not available",
+    label: "Some information in deferment application form is not available",
+  },
+  { value: "missing medical report", label: "Missing medical report" },
+  { value: "missing offical letter", label: "Missing official letter" },
+  { value: "missing signatures", label: "Missing signatures" },
+  { value: "others", label: "Others" },
+];
 
-  const [application, setApplication] = useState<any>();
-
+function ManageApplicationBySIgner() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      name: application.name,
-      nric: application.identity_no,
-      student_id: application.userid,
-      program_code: application.program_code,
-      program_name: application.program_name,
-      faculty: application.faculty_name,
-      current_semester: application.current_semester,
-      nationality: application.nationality,
-    },
+    defaultValues: {},
   });
 
-  const getApplication = async () => {
-    try {
-      const response: any = await axios.get(
-        "https://api.dosas.online/api/deferment-applications",
-        {
-          withCredentials: true,
-        }
-      );
-
-      if (id) setApplication(response.deferment_applications[id]);
-    } catch (e) {
-      console.error(e);
-    }
-  };
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState("");
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
   }
 
   const navigate = useNavigate();
-
-  useEffect(() => {
-    getApplication();
-  }, []);
 
   return (
     <Form {...form}>
@@ -94,14 +94,15 @@ function ViewApplicationByStudent() {
           <FormField
             control={form.control}
             name="name"
+            defaultValue="" //
             render={() => (
               <FormItem>
                 <FormLabel className="">Name</FormLabel>
                 <FormControl>
                   <Input
-                    disabled
                     className="bg-gray-100 font-bold"
-                    value={application.name}
+                    value="ALI BIN ABU"
+                    disabled
                   />
                 </FormControl>
                 <FormMessage />
@@ -113,6 +114,7 @@ function ViewApplicationByStudent() {
           <FormField
             control={form.control}
             name="nric"
+            defaultValue="" //
             render={() => (
               <FormItem>
                 <FormLabel className="">IC/ISID</FormLabel>
@@ -120,7 +122,7 @@ function ViewApplicationByStudent() {
                   <Input
                     disabled
                     className="bg-gray-100 font-bold"
-                    value={application.identity_no}
+                    placeholder="921212-10-5431"
                   />
                 </FormControl>
                 <FormMessage />
@@ -132,6 +134,7 @@ function ViewApplicationByStudent() {
           <FormField
             control={form.control}
             name="student_id"
+            defaultValue="" //
             render={() => (
               <FormItem>
                 <FormLabel className="">Student ID</FormLabel>
@@ -139,7 +142,7 @@ function ViewApplicationByStudent() {
                   <Input
                     disabled
                     className="bg-gray-100 font-bold"
-                    value={application.identity_no}
+                    placeholder="MAN221001"
                   />
                 </FormControl>
                 <FormMessage />
@@ -149,19 +152,19 @@ function ViewApplicationByStudent() {
         </div>
 
         <div className="w-full flex space-x-2 justify-between">
-          {/* name */}
           {/* program_code */}
           <div className="w-1/4">
             <FormField
               control={form.control}
               name="program_code"
+              defaultValue="" //
               render={() => (
                 <FormItem>
                   <FormLabel>Program Code</FormLabel>
                   <Input
                     disabled
                     className="bg-gray-100 font-bold"
-                    value={application.program_code}
+                    placeholder="MANPA1CKA"
                   />
                   <FormMessage />
                 </FormItem>
@@ -174,13 +177,14 @@ function ViewApplicationByStudent() {
             <FormField
               control={form.control}
               name="program_name"
+              defaultValue="" //
               render={() => (
                 <FormItem>
-                  <FormLabel>Program Name</FormLabel>
+                  <FormLabel className="">Program Name</FormLabel>
                   <Input
                     disabled
                     className="bg-gray-100 font-bold"
-                    value={application.program_name}
+                    placeholder="MASTER OF SOFTWARE ENGINEERING"
                   />
                   <FormMessage />
                 </FormItem>
@@ -195,13 +199,14 @@ function ViewApplicationByStudent() {
             <FormField
               control={form.control}
               name="faculty"
+              defaultValue="" //
               render={() => (
                 <FormItem>
                   <FormLabel>Faculty</FormLabel>
                   <Input
                     disabled
                     className="bg-gray-100 font-bold"
-                    value={application.faculty}
+                    placeholder="RAZAK FACULTY OF TECHNOLOGY AND INFORMATICS"
                   />
                   <FormMessage />
                 </FormItem>
@@ -214,13 +219,14 @@ function ViewApplicationByStudent() {
             <FormField
               control={form.control}
               name="current_semester"
+              defaultValue="" //
               render={() => (
                 <FormItem>
                   <FormLabel>Current Semester</FormLabel>
                   <Input
                     disabled
                     className="bg-gray-100 font-bold"
-                    value={application.current_semester}
+                    placeholder="2022/2023 - 1"
                   />
                   <FormMessage />
                 </FormItem>
@@ -229,10 +235,11 @@ function ViewApplicationByStudent() {
           </div>
         </div>
 
-        {/* deferment_reason */}
+        {/* deferment reason */}
         <FormField
           control={form.control}
           name="proposal_defense"
+          defaultValue="" //
           render={() => (
             <FormItem>
               <FormLabel>Deferment Reason</FormLabel>
@@ -240,7 +247,7 @@ function ViewApplicationByStudent() {
                 <Input
                   disabled
                   className="bg-gray-100 font-bold"
-                  value={application.deferment_reason}
+                  placeholder="PERSONAL HEALTH ISSUES"
                 />
               </FormControl>
               <FormMessage />
@@ -252,6 +259,7 @@ function ViewApplicationByStudent() {
         <FormField
           control={form.control}
           name="main_supervisor"
+          defaultValue="" //
           render={() => (
             <FormItem>
               <FormLabel>Main Supervisor</FormLabel>
@@ -259,7 +267,7 @@ function ViewApplicationByStudent() {
                 <Input
                   disabled
                   className="bg-gray-100 font-bold"
-                  value={application.main_supervisor}
+                  placeholder="DR SHAZAM BIN SHAZZA"
                 />
               </FormControl>
               <FormMessage />
@@ -271,6 +279,7 @@ function ViewApplicationByStudent() {
         <FormField
           control={form.control}
           name="co_supervisor"
+          defaultValue="" //
           render={() => (
             <FormItem>
               <FormLabel>Co-Supervisor</FormLabel>
@@ -279,7 +288,7 @@ function ViewApplicationByStudent() {
                   <Input
                     disabled
                     className="bg-gray-100 font-bold"
-                    value={application.co_supervisor}
+                    placeholder="DR MIRA BINTI MARI"
                   />
                 </div>
               </FormControl>
@@ -292,6 +301,7 @@ function ViewApplicationByStudent() {
         <FormField
           control={form.control}
           name="nationality"
+          defaultValue="" //
           render={() => (
             <FormItem>
               <FormLabel>Nationality</FormLabel>
@@ -299,7 +309,7 @@ function ViewApplicationByStudent() {
                 <Input
                   disabled
                   className="bg-gray-100 font-bold"
-                  value={application.nationality}
+                  placeholder="MALAYSIAN"
                 />
               </FormControl>
               <FormMessage />
@@ -311,6 +321,7 @@ function ViewApplicationByStudent() {
         <FormField
           control={form.control}
           name="proposal_defense"
+          defaultValue="" //
           render={() => (
             <FormItem>
               <FormLabel>Proposal Defense</FormLabel>
@@ -318,7 +329,7 @@ function ViewApplicationByStudent() {
                 <Input
                   disabled
                   className="bg-gray-100 font-bold"
-                  value={application.proposal_defense}
+                  placeholder=""
                 />
               </FormControl>
               <FormMessage />
@@ -330,6 +341,7 @@ function ViewApplicationByStudent() {
         <FormField
           control={form.control}
           name="nht_completion_status"
+          defaultValue="" //
           render={() => (
             <FormItem>
               <FormLabel>NHT Completion Status</FormLabel>
@@ -337,23 +349,129 @@ function ViewApplicationByStudent() {
                 <Input
                   disabled
                   className="bg-gray-100 font-bold"
-                  value={application.nht_completion_status}
+                  placeholder="INCOMPLETE"
                 />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
+        <FormField
+          control={form.control}
+          name="nationality"
+          defaultValue="" //
+          render={() => (
+            <FormItem>
+              <FormLabel>Rejection Reasons</FormLabel>
+              <FormControl>
+                <Popover open={open} onOpenChange={setOpen}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      aria-expanded={open}
+                      className="w-full justify-between"
+                    >
+                      <span className="">
+                        {value
+                          ? reasons.find((reason) => reason.value === value)
+                              ?.label
+                          : ""}
+                      </span>
+                      <ChevronsUpDown className="  shrink-0 " />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-full p-0">
+                    <Command>
+                      <CommandInput placeholder="Search reason for rejection..." />
+                      <CommandEmpty>No reasons found.</CommandEmpty>
+                      <CommandGroup>
+                        {reasons.map((reason) => (
+                          <CommandItem
+                            key={reason.value}
+                            value={reason.value}
+                            onSelect={(currentValue) => {
+                              setValue(
+                                currentValue === value ? "" : currentValue
+                              );
+                              setOpen(false);
+                            }}
+                          >
+                            <Check
+                              className={cn(
+                                "mr-2 h-4 w-4",
+                                value === reason.value
+                                  ? "opacity-100"
+                                  : "opacity-0"
+                              )}
+                            />
+                            {reason.label}
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        {value === "others" && (
+          <FormField
+            control={form.control}
+            name="name"
+            render={() => (
+              <FormItem>
+                <FormControl>
+                  <Textarea placeholder="Enter your rejection reason here." />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
 
-        <Button
-          className="text-right w-full mx-1"
-          onClick={() => navigate("/home")}
-        >
-          Go Back
-        </Button>
+        {value === "" ? (
+          <div className="flex w-full justify-around">
+            <Button
+              disabled
+              variant="destructive"
+              className="text-right bg-gray-500 w-full mx-1"
+              type="submit"
+            >
+              Reject
+            </Button>
+            <Button
+              variant="default"
+              className="text-right bg-green-700 w-full mx-1"
+              type="submit"
+            >
+              Approve
+            </Button>
+          </div>
+        ) : (
+          <div className="flex w-full justify-around">
+            <Button
+              variant="destructive"
+              className="text-right bg-red-500 w-full mx-1"
+              type="submit"
+            >
+              Reject
+            </Button>
+            <Button
+              disabled
+              variant="default"
+              className="text-right bg-gray-700 w-full mx-1"
+              type="submit"
+            >
+              Approve
+            </Button>
+          </div>
+        )}
       </form>
     </Form>
   );
 }
 
-export default ViewApplicationByStudent;
+export default ManageApplicationBySIgner;

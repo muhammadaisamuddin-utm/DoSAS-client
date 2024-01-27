@@ -10,6 +10,9 @@ import SubmitApplicationForm from "./pages/SubmitApplicationForm";
 import UpdateApplicationForm from "./pages/UpdateApplicationForm";
 import ViewApplicationByStudent from "./pages/ViewApplicationByStudent";
 import { AuthProvider } from "./authContext";
+// import ViewApplicationByOfficeAssistant from "./pages/ViewApplicationByOfficeAssistant";
+import LandingPage from "./pages/LandingPage";
+// import ManageApplicationByOfficeAssistant from "./pages/ManageApplicationByOfficeAssistant";
 
 const router = createBrowserRouter([
   {
@@ -26,6 +29,10 @@ const router = createBrowserRouter([
   },
   {
     path: "/",
+    element: <LandingPage />,
+  },
+  {
+    path: "/home",
     loader: applicationLoader,
     element: (
       <RequireAuth>
@@ -33,15 +40,6 @@ const router = createBrowserRouter([
       </RequireAuth>
     ),
   },
-  // {
-  //   path: "/home",
-  //   loader: applicationLoader,
-  //   element: (
-  //     // <RequireAuth>
-  //     <Dashboard />
-  //     // </RequireAuth>
-  //   ),
-  // },
   {
     path: "/application",
     loader: undefined,
@@ -60,6 +58,10 @@ const router = createBrowserRouter([
         // update application (student only)
         path: ":id/update",
         element: <UpdateApplicationForm />,
+      },
+      {
+        path: ":id/manage",
+        element: <ViewApplicationDetails />,
       },
     ],
   },

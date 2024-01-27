@@ -12,7 +12,9 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { ChevronsUpDown, Plus } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
+import { useEffect, useState } from "react";
 // import { CommandEmpty, CommandInput } from "cmdk";
 
 const formSchema = z.object({
@@ -42,12 +44,34 @@ const formSchema = z.object({
 //   { value: "Others", label: "Others" },
 // ];
 
+// function onSubmit(values: z.infer<typeof formSchema>) {
+//   console.log(values);
+// }
+
 function UpdateApplicationForm() {
+  const [application, setApplication] = useState<any>();
+
+  let { id } = useParams();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     // defaulvalues for form fields
     defaultValues: {},
   });
+
+  const getApplication = async () => {
+    try {
+      const response: any = await axios.get(
+        "https://api.dosas.online/api/deferment-applications",
+        {
+          withCredentials: true,
+        }
+      );
+
+      if (id) setApplication(response.deferment_applications[id]);
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   // const [open, setOpen] = useState(false);
   // const [value, setValue] = useState("");
@@ -58,6 +82,10 @@ function UpdateApplicationForm() {
 
   const navigate = useNavigate();
 
+  useEffect(() => {
+    getApplication();
+  }, []);
+
   return (
     <Form {...form}>
       <form
@@ -65,7 +93,7 @@ function UpdateApplicationForm() {
         className="space-y-2 flex flex-col flex-wrap w-full max-w-lg justify-center mx-auto mt-2 mb-4"
       >
         <div className="flex relative items-center">
-          <Button className="z-40 w-20 h-8" onClick={() => navigate("/")}>
+          <Button className="z-40 w-20 h-8" onClick={() => navigate("/home")}>
             Back
           </Button>
           <span className="absolute mx-auto w-full text-center font-bold">
@@ -83,7 +111,7 @@ function UpdateApplicationForm() {
                 <FormControl>
                   <Input
                     className="bg-gray-100"
-                    placeholder="ALI BIN ABU"
+                    value={application.name}
                     disabled
                   />
                 </FormControl>
@@ -102,7 +130,7 @@ function UpdateApplicationForm() {
                 <FormControl>
                   <Input
                     className="bg-gray-100"
-                    placeholder="921212-10-5431"
+                    value={application.identity_no}
                     disabled
                   />
                 </FormControl>
@@ -121,7 +149,7 @@ function UpdateApplicationForm() {
                 <FormControl>
                   <Input
                     className="bg-gray-100"
-                    placeholder="MAN221001"
+                    value={application.identity_no}
                     disabled
                   />
                 </FormControl>
@@ -142,7 +170,7 @@ function UpdateApplicationForm() {
                   <FormLabel>Program Code</FormLabel>
                   <Input
                     className="bg-gray-100"
-                    placeholder="MANPA1CKA"
+                    value={application.program_code}
                     disabled
                   />
                   <FormMessage />
@@ -161,7 +189,7 @@ function UpdateApplicationForm() {
                   <FormLabel>Program Name</FormLabel>
                   <Input
                     className="bg-gray-100"
-                    placeholder="MASTER OF SOFTWARE ENGINEERING"
+                    value={application.program_name}
                     disabled
                   />
                   <FormMessage />
@@ -182,7 +210,7 @@ function UpdateApplicationForm() {
                   <FormLabel>Faculty</FormLabel>
                   <Input
                     className="bg-gray-100"
-                    placeholder="RAZAK FACULTY OF TECHNOLOGY AND INFORMATICS"
+                    value={application.program_name}
                     disabled
                   />
                   <FormMessage />
@@ -201,7 +229,7 @@ function UpdateApplicationForm() {
                   <FormLabel>Current Semester</FormLabel>
                   <Input
                     className="bg-gray-100"
-                    placeholder="2022/2023 - 1"
+                    value={application.current_semester}
                     disabled
                   />
                   <FormMessage />
@@ -241,11 +269,15 @@ function UpdateApplicationForm() {
         <FormField
           control={form.control}
           name="main_supervisor"
-          render={({ field }) => (
+          render={() => (
             <FormItem>
               <FormLabel>Main Supervisor</FormLabel>
               <FormControl>
-                <Input className="" {...field} />
+                <Input
+                  className=""
+                  value={application.main_supervisor}
+                  // {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -256,12 +288,12 @@ function UpdateApplicationForm() {
         <FormField
           control={form.control}
           name="co_supervisor"
-          render={({ field }) => (
+          render={() => (
             <FormItem>
               <FormLabel>Co-Supervisor</FormLabel>
               <FormControl>
                 <div className="flex space-x-2">
-                  <Input className="" {...field} />
+                  <Input className="" value={application.co_supervisor} />
                   <Button variant="outline" className="">
                     <Plus className="  shrink-0 " />
                   </Button>
@@ -282,7 +314,7 @@ function UpdateApplicationForm() {
               <FormControl>
                 <Input
                   className="bg-gray-100"
-                  placeholder="MALAYSIAN"
+                  value={application.nationality}
                   disabled
                 />
               </FormControl>
@@ -295,11 +327,15 @@ function UpdateApplicationForm() {
         <FormField
           control={form.control}
           name="proposal_defense"
-          render={({ field }) => (
+          render={() => (
             <FormItem>
               <FormLabel>Proposal Defense</FormLabel>
               <FormControl>
-                <Input className="" placeholder="" {...field} />
+                <Input
+                  className=""
+                  placeholder=""
+                  value={application.proposal_defense}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -310,11 +346,11 @@ function UpdateApplicationForm() {
         <FormField
           control={form.control}
           name="nht_completion_status"
-          render={({ field }) => (
+          render={() => (
             <FormItem>
               <FormLabel>NHT Completion Status</FormLabel>
               <FormControl>
-                <Input className="" {...field} />
+                <Input className="" value={application.nht_completion_status} />
               </FormControl>
               <FormMessage />
             </FormItem>

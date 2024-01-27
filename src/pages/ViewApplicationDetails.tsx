@@ -14,7 +14,7 @@ function ViewApplicationDetails() {
   return (
     <>
       {role === "STUDENT" && <ViewApplicationByStudent />}
-      {role === "OFFICE_ASSISTANT" && <ViewApplicationByOfficeAssistant />}
+      {role === "ACADEMIC_ASSISTANT" && <ViewApplicationByOfficeAssistant />}
       {role === "SUPERVISOR" ||
         (role === "PROGRAM_COORDINATOR" && <ViewApplicationBySigner />)}
     </>

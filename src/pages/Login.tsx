@@ -16,6 +16,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import student_discussing from "../assets/student_discussing.svg";
 import { useAuth } from "@/authContext";
 import { useNavigate } from "react-router-dom";
+import { useToast } from "@/components/ui/use-toast";
+import { Toaster } from "@/components/ui/toaster";
 
 const formSchema = z.object({
   email: z
@@ -38,44 +40,55 @@ function Login() {
 
   const { login } = useAuth();
   const navigate = useNavigate();
+  const { toast } = useToast();
 
-  const getXsrfToken = async () => {
-    try {
-      const response = await axios.get(
-        "https://api.dosas.online/sanctum/csrf-cookie"
-      );
+  // const getXsrfToken = async () => {
+  //   try {
+  //     const response = await axios.get(
+  //       "https://api.dosas.online/sanctum/csrf-cookie"
+  //     );
 
-      console.log(response);
-    } catch (error) {
-      console.error("Error fetching XSRF token:", error);
-    }
-  };
+  //     console.log(response);
+  //   } catch (error) {
+  //     console.error("Error fetching XSRF token:", error);
+  //   }
+  // };
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    await getXsrfToken();
+    // await getXsrfToken();
 
     try {
       const response = await axios.post(
         "https://api.dosas.online/api/login",
         values,
-        {
-          withCredentials: true,
-          headers: {
-            "Access-Control-Allow-Origin": "*",
-            "Content-Type": "application/json",
-          },
-        }
+        // {
+        //   withCredentials: true,
+        //   headers: {
+        //     "Access-Control-Allow-Origin": "*",
+        //     "Content-Type": "application/json",
+        //   },
+        // }
       );
 
       if (response.status === 200) {
         login?.(response.data);
-        navigate("/");
-        // navigate("/home");
+        navigate("/home");
       } else {
-        console.error("Invalid username or password");
+        console.error("Invalid credentials");
       }
     } catch (e) {
       console.error(e);
+
+      //show notification
+      toast({
+        variant: "destructive",
+        description: "Invalid credentials",
+      });
+
+      setTimeout(() => {
+        //redirect
+        navigate("/home");
+      }, 3000);
     }
   };
 
@@ -151,6 +164,7 @@ function Login() {
         </form>
       </Form>
       <img className="mx-5" src={student_discussing} alt="Student group" />
+      <Toaster />
     </div>
   );
 }

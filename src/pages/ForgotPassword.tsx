@@ -22,11 +22,12 @@ const formSchema = z.object({
     .min(1, { message: "Please input a valid user id or an email" }),
 });
 
+
 function ForgotPassword() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: "fkljsd",
+      email: "",
     },
   });
 
@@ -56,7 +57,7 @@ function ForgotPassword() {
 
     setTimeout(() => {
       //redirect
-      navigate("/");
+      navigate("/home");
     }, 3000);
   };
 
@@ -84,7 +85,7 @@ function ForgotPassword() {
             <FormItem>
               <FormLabel>User ID or Email</FormLabel>
               <FormControl>
-                <Input placeholder="" disabled />
+                <Input placeholder="" />
               </FormControl>
               <FormMessage />
             </FormItem>

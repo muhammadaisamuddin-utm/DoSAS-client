@@ -4,9 +4,34 @@ import { Application } from "@/types/Application";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 
-// basically just put your data type here
-// and adjust accordingly
+function ActionComponent({ row }: {  row: any }) {
+  const navigate = useNavigate();
+
+  return (
+    <div className="flex space-x-2 justify-center">
+      <Button
+        variant="secondary"
+        size="sm"
+        onClick={() => {
+          navigate(`/application/${row.id}`);
+        }}
+      >
+        View details
+      </Button>
+      <Button
+        variant="secondary"
+        size="sm"
+        onClick={() => {
+          navigate(`/application/${row.id}/manage`);
+        }}
+      >
+        Manage application
+      </Button>
+    </div>
+  );
+}
 
 export const columns: ColumnDef<Application>[] = [
   {
@@ -163,17 +188,10 @@ export const columns: ColumnDef<Application>[] = [
   {
     id: "actions",
     header: "Actions",
-    cell: () => {
-      return (
-        <div className="flex space-x-2 justify-center">
-          <Button variant="secondary" size="sm">
-          View details
-          </Button>
-          <Button variant="secondary" size="sm">
-            Manage application
-          </Button>
-        </div>
-      );
+    cell: ({ row }) => {
+      // const application = row.original;
+
+      return <ActionComponent row={row} />;
     },
   },
 ];
