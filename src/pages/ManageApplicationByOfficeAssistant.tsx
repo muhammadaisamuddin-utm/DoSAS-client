@@ -11,30 +11,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Check, ChevronsUpDown } from "lucide-react";
 import { useState } from "react";
-import {
-  PopoverContent,
-  Popover,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-} from "@/components/ui/command";
-import { cn } from "@/lib/utils";
-import { Textarea } from "@/components/ui/textarea";
 import { Link, useLoaderData, useNavigate, useParams } from "react-router-dom";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 import local_deferment_pdf from "../assets/UTMAMD01-Penangguhan-Pengajian-Pelajar-Tempatan-Pindaan-2022.pdf";
 import axios from "axios";

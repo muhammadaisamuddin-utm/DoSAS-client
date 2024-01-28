@@ -1,4 +1,3 @@
-import { Application } from "@/types/Application";
 import { ApplicationStatus } from "@/enums/ApplicationStatus";
 
 export const mockApplications: any[] = [
