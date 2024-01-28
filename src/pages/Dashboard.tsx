@@ -4,11 +4,11 @@ import SignerDashboard from "./SignerDashboard";
 import OfficeAssistantDashboard from "./OfficeAssistantDashboard";
 import { Roles } from "@/enums/Roles";
 import { useLoaderData, useNavigate } from "react-router-dom";
-import axios from "axios";
 import { useEffect } from "react";
+import axiosInstance from "@/main";
 
 export async function applicationLoader() {
-  const response = await axios.get(
+  const response = await axiosInstance.get(
     "https://api.dosas.online/api/deferment-applications",
     // "http://localhost:8000/api/deferment-applications",
     { withCredentials: true }

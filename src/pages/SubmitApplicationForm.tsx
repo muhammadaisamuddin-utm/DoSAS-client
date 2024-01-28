@@ -20,10 +20,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import axios from "axios";
 import { useState } from "react";
 import local_deferment_pdf from "../assets/UTMAMD01-Penangguhan-Pengajian-Pelajar-Tempatan-Pindaan-2022.pdf";
 import intl_deferment_pdf from "../assets/UTMAMD02-Deferment-of-Study-International-Student-Amendment-2022.pdf";
+import axiosInstance from "@/main";
 
 const formSchema = z.object({
   name: z.string(),
@@ -107,7 +107,7 @@ function SubmitApplicationForm() {
 
       console.log(fileUpload);
 
-      const response = await axios.post(
+      const response = await axiosInstance.post(
         "https://api.dosas.online/api/deferment-application",
         // "http//localhost:8000/api/deferment-application",
         formData,

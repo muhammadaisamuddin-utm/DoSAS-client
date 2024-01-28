@@ -13,8 +13,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { ChevronsUpDown, Plus } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
 import { useEffect, useState } from "react";
+import axiosInstance from "@/main";
 // import { CommandEmpty, CommandInput } from "cmdk";
 
 const formSchema = z.object({
@@ -60,7 +60,7 @@ function UpdateApplicationForm() {
 
   const getApplication = async () => {
     try {
-      const response: any = await axios.get(
+      const response: any = await axiosInstance.get(
         "https://api.dosas.online/api/deferment-applications",
         {
           withCredentials: true,

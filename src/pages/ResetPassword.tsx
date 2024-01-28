@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import { Toaster } from "@/components/ui/toaster";
-import axios from "axios";
+import axiosInstance from "@/main";
 
 const formSchema = z
   .object({
@@ -67,7 +67,7 @@ function ResetPassword({ isFirstTime }: Readonly<ResetPasswordProp>) {
     };
 
     try {
-      const response = await axios.post(
+      const response = await axiosInstance.post(
         "https://api.dosas.online/api/reset-password",
         body,
         { withCredentials: true }

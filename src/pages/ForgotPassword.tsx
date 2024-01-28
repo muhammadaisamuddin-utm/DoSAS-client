@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import { Toaster } from "@/components/ui/toaster";
-import axios from "axios";
+import axiosInstance from "@/main";
 
 const formSchema = z.object({
   email: z
@@ -38,7 +38,7 @@ function ForgotPassword() {
 
     //send request
     try {
-      const response = await axios.post(
+      const response = await axiosInstance.post(
         "https://api.dosas.online/api/forgot-password",
         values,
         { withCredentials: true }

@@ -1,8 +1,8 @@
-import axios from "axios";
+import axiosInstance from "@/main";
 import { useEffect } from "react";
 
 export async function getApplications() {
-  const response = await axios.get(
+  const response = await axiosInstance.get(
     "https://api.dosas.online/api/deferment-applications",
     { withCredentials: true }
   );
