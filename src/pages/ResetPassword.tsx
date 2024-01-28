@@ -18,8 +18,18 @@ import axios from "axios";
 
 const formSchema = z
   .object({
-    newPassword: z.string().min(1),
-    confirmPassword: z.string().min(1),
+    newPassword: z
+      .string()
+      .min(1)
+      .refine((data) => /^[a-zA-Z0-9]{8,16}$/.test(data), {
+        message: "Password must be 8 - 16 alphanumeric combination",
+      }),
+    confirmPassword: z
+      .string()
+      .min(1)
+      .refine((data) => /^[a-zA-Z0-9]{8,16}$/.test(data), {
+        message: "Password must be 8 - 16 alphanumeric combination",
+      }),
   })
   .refine((data) => data.newPassword === data.confirmPassword, {
     message: " ",
@@ -130,13 +140,15 @@ function ResetPassword({ isFirstTime }: Readonly<ResetPasswordProp>) {
         />
 
         <Button type="submit">Reset password</Button>
-        <Button
-          className="border border-black"
-          variant="secondary"
-          onClick={() => navigate("/login")}
-        >
-          Cancel
-        </Button>
+        {!isFirstTime && (
+          <Button
+            className="border border-black"
+            variant="secondary"
+            onClick={() => navigate("/login")}
+          >
+            Cancel
+          </Button>
+        )}
 
         <Toaster />
       </form>

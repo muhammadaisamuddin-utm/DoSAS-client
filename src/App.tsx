@@ -13,6 +13,7 @@ import { AuthProvider } from "./authContext";
 // import ViewApplicationByOfficeAssistant from "./pages/ViewApplicationByOfficeAssistant";
 import LandingPage from "./pages/LandingPage";
 import Test from "./pages/Test";
+import ManageApplicationDetails from "./pages/ManageApplicationDetails";
 // import ManageApplicationByOfficeAssistant from "./pages/ManageApplicationByOfficeAssistant";
 
 const router = createBrowserRouter([
@@ -63,11 +64,13 @@ const router = createBrowserRouter([
       {
         // update application (student only)
         path: ":id/update",
+        loader: applicationLoader,
         element: <UpdateApplicationForm />,
       },
       {
         path: ":id/manage",
-        element: <ViewApplicationDetails />,
+        loader: applicationLoader,
+        element: <ManageApplicationDetails />,
       },
     ],
   },

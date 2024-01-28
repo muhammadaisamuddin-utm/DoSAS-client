@@ -24,9 +24,6 @@ const formSchema = z.object({
     .string()
     .min(1, { message: "Input proper user id or email address" }),
   password: z.string(),
-  // password: z.string().refine((value) => /^[a-zA-Z0-9]{8,16}$/.test(value), {
-  //   message: "Password must be 8 - 16 alphanumeric combination",
-  // }),
 });
 
 function Login() {

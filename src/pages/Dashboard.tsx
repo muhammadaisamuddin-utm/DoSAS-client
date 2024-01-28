@@ -31,9 +31,9 @@ function Dashboard() {
   const hasLoggedIn = parsedUser?.has_logged_in;
 
   useEffect(() => {
-    if (!hasLoggedIn) {
-      navigate("/password-reset/first-time");
-    }
+    // if (!hasLoggedIn) {
+    //   navigate("/password-reset/first-time");
+    // }
   }, []);
 
   const applications = useLoaderData();

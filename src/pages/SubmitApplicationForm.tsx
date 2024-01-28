@@ -11,7 +11,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/authContext";
 import {
   Select,
@@ -22,6 +22,8 @@ import {
 } from "@/components/ui/select";
 import axios from "axios";
 import { useState } from "react";
+import local_deferment_pdf from "../assets/UTMAMD01-Penangguhan-Pengajian-Pelajar-Tempatan-Pindaan-2022.pdf";
+import intl_deferment_pdf from "../assets/UTMAMD02-Deferment-of-Study-International-Student-Amendment-2022.pdf";
 
 const formSchema = z.object({
   name: z.string(),
@@ -63,6 +65,7 @@ function SubmitApplicationForm() {
   const navigate = useNavigate();
 
   const [isOther, setIsOther] = useState<boolean>(false);
+  const [fileUpload, setFileUpload] = useState<any>(null);
 
   const { user } = useAuth();
   let parsedUser: any;
@@ -89,12 +92,20 @@ function SubmitApplicationForm() {
     },
   });
 
+  const handleFileUpload = (e: any) => {
+    e.preventDefault();
+    setFileUpload(e.target.files[0]);
+  };
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       const formData = new FormData();
       formData.append("reason", values.deferment_reason);
       formData.append("others", values.other);
-      formData.append("pdf_form", values.pdf_file);
+      // formData.append("pdf_form", values.pdf_file);
+      formData.append("pdf_form", fileUpload);
+
+      console.log(fileUpload);
 
       const response = await axios.post(
         "https://api.dosas.online/api/deferment-application",
@@ -417,14 +428,34 @@ function SubmitApplicationForm() {
         />
 
         <div className="my-4 py-2">
-          <Button variant="secondary">
-            Download Deferment Application Form
-          </Button>
+          {parsedUser.nationality === "MY" ? (
+            <Button variant="secondary">
+              <Link
+                to={local_deferment_pdf}
+                download="UTMAMD01-Penangguhan-Pengajian-Pelajar-Tempatan-Pindaan-2022.pdf"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Download Deferment Application Form (Local)
+              </Link>
+            </Button>
+          ) : (
+            <Button variant="secondary">
+              <Link
+                to={intl_deferment_pdf}
+                download="UTMAMD02-Deferment-of-Study-International-Student-Amendment-2022.pdf"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Download Deferment Application Form (International)
+              </Link>
+            </Button>
+          )}
         </div>
 
         <div className="my-4 py-2">
           <FormLabel>Upload Deferment Application Form</FormLabel>
-          <Input id="pdf_file" type="file" />
+          <Input id="pdf_file" type="file" onChange={handleFileUpload} />
         </div>
         <div className="flex w-full justify-around">
           <Button className="text-right w-full mx-1" type="submit">

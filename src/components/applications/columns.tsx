@@ -6,7 +6,7 @@ import { ArrowUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 
-function ActionComponent({ row }: Readonly<{  row: any }>) {
+function ActionComponent({ row }: Readonly<{ row: any }>) {
   const navigate = useNavigate();
 
   return (
@@ -155,31 +155,41 @@ export const columns: ColumnDef<Application>[] = [
     },
     cell: ({ row }) => {
       const application = row.original;
-      switch (application.status.toString()) {
-        case "REJECTED":
+      switch (application.status) {
+        case "rejected":
+        case "terminated":
           return (
-            <span className="block text-center font-bold text-red-500">
-              {application.status.toString()}
+            <span className="block text-center font-bold text-red-500 uppercase">
+              {application.status}
             </span>
           );
-
-        case "PENDING":
+        case "submitted":
+        case "pending":
+        case "pending_approval":
           return (
-            <span className="block text-center font-bold text-blue-500">
-              {application.status.toString()}
+            <span className="block text-center font-bold text-blue-500 uppercase">
+              {application.status}
             </span>
           );
-
-        case "APPROVED":
+        case "approved":
+        case "endorsed1":
+        case "endorsed2":
+        case "checked":
           return (
-            <span className="block text-center font-bold text-green-500">
-              {application.status.toString()}
+            <span className="block text-center font-bold text-green-500 uppercase">
+              {application.status}
+            </span>
+          );
+        case "expired":
+          return (
+            <span className="block text-center font-bold text-gray-500 uppercase">
+              {application.status}
             </span>
           );
         default:
           return (
-            <span className="block text-center font-bold ">
-              {application.status.toString()}
+            <span className="block text-center font-bold uppercase">
+              {application.status}
             </span>
           );
       }

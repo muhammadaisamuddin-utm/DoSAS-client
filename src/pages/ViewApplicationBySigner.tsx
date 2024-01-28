@@ -11,12 +11,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
+import { useLoaderData, useNavigate, useParams } from "react-router-dom";
 
 const formSchema = z.object({
-  name: z.string().min(0),
+  name: z.string(),
   nric: z.string(),
   student_id: z.string(),
   program_code: z.string(),
@@ -33,12 +31,22 @@ const formSchema = z.object({
 
 function ViewApplicationBySigner() {
   let { id } = useParams();
-
-  const [application, setApplication] = useState<any>();
+  const applications: any = useLoaderData();
+  let application: any;
+  if (id) application = applications[id];
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {},
+    defaultValues: {
+      name: application.name,
+      nric: application.identity_no,
+      student_id: application.userid,
+      program_code: application.program_code,
+      program_name: application.program_name,
+      faculty: application.faculty_name,
+      current_semester: application.current_semester,
+      nationality: application.nationality,
+    },
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
@@ -47,25 +55,6 @@ function ViewApplicationBySigner() {
 
   const navigate = useNavigate();
 
-  const getApplication = async () => {
-    try {
-      const response: any = await axios.get(
-        "https://api.dosas.online/api/deferment-applications",
-        {
-          withCredentials: true,
-        }
-      );
-
-      if (id) setApplication(response.deferment_applications[id]);
-    } catch (e) {
-      console.error(e);
-    }
-  };
-
-  useEffect(() => {
-    getApplication();
-  }, []);
-
   return (
     <Form {...form}>
       <form
@@ -73,7 +62,13 @@ function ViewApplicationBySigner() {
         className="space-y-2 flex flex-col flex-wrap w-full max-w-lg justify-center mx-auto mt-2 mb-4"
       >
         <div className="flex relative items-center">
-          <Button className="z-40 w-20 h-8" onClick={() => navigate("/home")}>
+          <Button
+            className="z-40 w-20 h-8"
+            onClick={(e) => {
+              e.preventDefault();
+              navigate("/home");
+            }}
+          >
             Back
           </Button>
           <span className="absolute mx-auto w-full text-center font-bold">
@@ -85,15 +80,14 @@ function ViewApplicationBySigner() {
           <FormField
             control={form.control}
             name="name"
-            defaultValue="" //
             render={() => (
               <FormItem>
                 <FormLabel className="">Name</FormLabel>
                 <FormControl>
                   <Input
+                    disabled
                     className="bg-gray-100 font-bold"
                     value={application.name}
-                    disabled
                   />
                 </FormControl>
                 <FormMessage />
@@ -105,7 +99,6 @@ function ViewApplicationBySigner() {
           <FormField
             control={form.control}
             name="nric"
-            defaultValue="" //
             render={() => (
               <FormItem>
                 <FormLabel className="">IC/ISID</FormLabel>
@@ -125,7 +118,6 @@ function ViewApplicationBySigner() {
           <FormField
             control={form.control}
             name="student_id"
-            defaultValue="" //
             render={() => (
               <FormItem>
                 <FormLabel className="">Student ID</FormLabel>
@@ -133,7 +125,7 @@ function ViewApplicationBySigner() {
                   <Input
                     disabled
                     className="bg-gray-100 font-bold"
-                    value={application.identity_no}
+                    value={application.userid}
                   />
                 </FormControl>
                 <FormMessage />
@@ -148,7 +140,6 @@ function ViewApplicationBySigner() {
             <FormField
               control={form.control}
               name="program_code"
-              defaultValue="" //
               render={() => (
                 <FormItem>
                   <FormLabel>Program Code</FormLabel>
@@ -168,10 +159,9 @@ function ViewApplicationBySigner() {
             <FormField
               control={form.control}
               name="program_name"
-              defaultValue="" //
               render={() => (
                 <FormItem>
-                  <FormLabel className="">Program Name</FormLabel>
+                  <FormLabel>Program Name</FormLabel>
                   <Input
                     disabled
                     className="bg-gray-100 font-bold"
@@ -190,14 +180,13 @@ function ViewApplicationBySigner() {
             <FormField
               control={form.control}
               name="faculty"
-              defaultValue="" //
               render={() => (
                 <FormItem>
                   <FormLabel>Faculty</FormLabel>
                   <Input
                     disabled
                     className="bg-gray-100 font-bold"
-                    value={application.faculty}
+                    value={application.faculty_name}
                   />
                   <FormMessage />
                 </FormItem>
@@ -210,14 +199,14 @@ function ViewApplicationBySigner() {
             <FormField
               control={form.control}
               name="current_semester"
-              defaultValue="" //
               render={() => (
                 <FormItem>
                   <FormLabel>Current Semester</FormLabel>
                   <Input
                     disabled
                     className="bg-gray-100 font-bold"
-                    value={application.current_semester}
+                    value={application.semester_name}
+                    // value={application.semester_status}
                   />
                   <FormMessage />
                 </FormItem>
@@ -226,11 +215,10 @@ function ViewApplicationBySigner() {
           </div>
         </div>
 
-        {/* deferment reason */}
+        {/* deferment_reason */}
         <FormField
           control={form.control}
           name="proposal_defense"
-          defaultValue="" //
           render={() => (
             <FormItem>
               <FormLabel>Deferment Reason</FormLabel>
@@ -250,7 +238,6 @@ function ViewApplicationBySigner() {
         <FormField
           control={form.control}
           name="main_supervisor"
-          defaultValue="" //
           render={() => (
             <FormItem>
               <FormLabel>Main Supervisor</FormLabel>
@@ -258,7 +245,7 @@ function ViewApplicationBySigner() {
                 <Input
                   disabled
                   className="bg-gray-100 font-bold"
-                  value={application.main_supervisor}
+                  value={application.supervisor}
                 />
               </FormControl>
               <FormMessage />
@@ -270,7 +257,6 @@ function ViewApplicationBySigner() {
         <FormField
           control={form.control}
           name="co_supervisor"
-          defaultValue="" //
           render={() => (
             <FormItem>
               <FormLabel>Co-Supervisor</FormLabel>
@@ -292,7 +278,6 @@ function ViewApplicationBySigner() {
         <FormField
           control={form.control}
           name="nationality"
-          defaultValue="" //
           render={() => (
             <FormItem>
               <FormLabel>Nationality</FormLabel>
@@ -312,7 +297,6 @@ function ViewApplicationBySigner() {
         <FormField
           control={form.control}
           name="proposal_defense"
-          defaultValue="" //
           render={() => (
             <FormItem>
               <FormLabel>Proposal Defense</FormLabel>
@@ -320,7 +304,7 @@ function ViewApplicationBySigner() {
                 <Input
                   disabled
                   className="bg-gray-100 font-bold"
-                  value={application.proposal_defense}
+                  value={application.proposal_defense_status}
                 />
               </FormControl>
               <FormMessage />
@@ -332,7 +316,6 @@ function ViewApplicationBySigner() {
         <FormField
           control={form.control}
           name="nht_completion_status"
-          defaultValue="" //
           render={() => (
             <FormItem>
               <FormLabel>NHT Completion Status</FormLabel>
@@ -347,6 +330,16 @@ function ViewApplicationBySigner() {
             </FormItem>
           )}
         />
+
+        <Button
+          className="text-right w-full mx-1"
+          onClick={(e) => {
+            e.preventDefault();
+            navigate("/home");
+          }}
+        >
+          Go Back
+        </Button>
       </form>
     </Form>
   );
