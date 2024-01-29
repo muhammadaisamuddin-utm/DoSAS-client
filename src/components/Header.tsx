@@ -37,9 +37,9 @@ function Header({ username, role }: Readonly<HeaderProps>) {
         </div>
         <AlertDialog>
           <AlertDialogTrigger>
-            <button className="text-md no-underline font-bold mx-2">
+            <span className="text-md no-underline font-bold mx-2">
               Log Out
-            </button>
+            </span>
           </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>

@@ -23,7 +23,9 @@ import {
 import { useState } from "react";
 import local_deferment_pdf from "../assets/UTMAMD01-Penangguhan-Pengajian-Pelajar-Tempatan-Pindaan-2022.pdf";
 import intl_deferment_pdf from "../assets/UTMAMD02-Deferment-of-Study-International-Student-Amendment-2022.pdf";
-import axiosInstance from "@/main";
+import { axiosInstance } from "@/lib/axiosInstance";
+import { useToast } from "@/components/ui/use-toast";
+import { Toaster } from "@/components/ui/toaster";
 
 const formSchema = z.object({
   name: z.string(),
@@ -33,11 +35,10 @@ const formSchema = z.object({
   program_name: z.string(),
   faculty: z.string(),
   current_semester: z.number(),
-  // deferment_reason: z.string().optional(),
   deferment_reason: z.string(),
   other: z.string(),
   main_supervisor: z.string(),
-  co_supervisor: z.string().optional(),
+  co_supervisor: z.any(),
   nationality: z.string(),
   proposal_defense: z.boolean(),
   nht_completion_status: z.boolean(),
@@ -63,6 +64,7 @@ const reasons = [
 
 function SubmitApplicationForm() {
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   const [isOther, setIsOther] = useState<boolean>(false);
   const [fileUpload, setFileUpload] = useState<any>(null);
@@ -73,7 +75,6 @@ function SubmitApplicationForm() {
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    // defaulvalues for form fields
     defaultValues: {
       name: parsedUser.name,
       identity_no: parsedUser.identity_no,
@@ -94,29 +95,43 @@ function SubmitApplicationForm() {
 
   const handleFileUpload = (e: any) => {
     e.preventDefault();
+    console.log(e.target.files[0]);
     setFileUpload(e.target.files[0]);
+  };
+
+  const handleBack = (e: any) => {
+    e.preventDefault();
+    navigate("/home");
   };
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
+      console.log(values);
+
       const formData = new FormData();
       formData.append("reason", values.deferment_reason);
       formData.append("others", values.other);
-      // formData.append("pdf_form", values.pdf_file);
       formData.append("pdf_form", fileUpload);
 
-      console.log(fileUpload);
+      await axiosInstance.post("/api/deferment-application", formData);
 
-      const response = await axiosInstance.post(
-        "https://api.dosas.online/api/deferment-application",
-        // "http//localhost:8000/api/deferment-application",
-        formData,
-        { withCredentials: true }
-      );
-      console.log(response);
-      console.log(values);
+      toast({
+        variant: "default",
+        description: "Deferred application is successful",
+      });
+
+      navigate("/home");
+
+      setTimeout(() => {
+        navigate("/home");
+      }, 1000);
     } catch (error) {
       console.error(error);
+
+      toast({
+        variant: "destructive",
+        description: "Error handling request",
+      });
     }
   };
 
@@ -127,13 +142,7 @@ function SubmitApplicationForm() {
         className="space-y-2 flex flex-col flex-wrap w-full max-w-lg justify-center mx-auto mt-2 mb-4"
       >
         <div className="flex relative items-center">
-          <Button
-            className="z-40 w-20 h-8"
-            onClick={(e) => {
-              e.preventDefault();
-              navigate("/home");
-            }}
-          >
+          <Button className="z-40 w-20 h-8" onClick={(e) => handleBack(e)}>
             Back
           </Button>
           <span className="absolute mx-auto w-full text-center font-bold">
@@ -212,7 +221,6 @@ function SubmitApplicationForm() {
                     value={parsedUser.program_code}
                     disabled
                   />
-                  {/* <FormMessage /> */}
                 </FormItem>
               )}
             />
@@ -231,7 +239,6 @@ function SubmitApplicationForm() {
                     value={parsedUser.program_name}
                     disabled
                   />
-                  {/* <FormMessage /> */}
                 </FormItem>
               )}
             />
@@ -292,7 +299,6 @@ function SubmitApplicationForm() {
                     setIsOther(false);
                   }
                 }}
-                // defaultValue={field.value}
               >
                 <FormControl>
                   <SelectTrigger>
@@ -462,6 +468,7 @@ function SubmitApplicationForm() {
             Submit
           </Button>
         </div>
+        <Toaster />
       </form>
     </Form>
   );

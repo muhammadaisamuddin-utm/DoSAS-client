@@ -2,7 +2,7 @@ import "./App.css";
 import Login from "./pages/Login";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
-import Dashboard, { applicationLoader } from "./pages/Dashboard";
+import Dashboard from "./pages/Dashboard";
 import ViewApplicationDetails from "./pages/ViewApplicationDetails";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import { RequireAuth } from "./RequireAuth";
@@ -13,6 +13,7 @@ import { AuthProvider } from "./authContext";
 // import ViewApplicationByOfficeAssistant from "./pages/ViewApplicationByOfficeAssistant";
 import LandingPage from "./pages/LandingPage";
 import ManageApplicationDetails from "./pages/ManageApplicationDetails";
+import { applicationsLoader } from "./lib/loader";
 // import ManageApplicationByOfficeAssistant from "./pages/ManageApplicationByOfficeAssistant";
 
 const router = createBrowserRouter([
@@ -22,7 +23,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/home",
-    loader: applicationLoader,
+    loader: applicationsLoader,
     element: (
       <RequireAuth>
         <Dashboard />
@@ -39,7 +40,11 @@ const router = createBrowserRouter([
   },
   {
     path: "/password-reset/first-time",
-    element: <ResetPassword isFirstTime/>,
+    element: (
+      <RequireAuth>
+        <ResetPassword isFirstTime />
+      </RequireAuth>
+    ),
   },
   {
     path: "/password-reset/:token",
@@ -47,35 +52,51 @@ const router = createBrowserRouter([
   },
   {
     path: "/application",
-    loader: undefined,
+    loader: applicationsLoader,
     children: [
       {
         // new application (student only)
         path: "submit",
-        element: <SubmitApplicationForm />,
+        element: (
+          <RequireAuth>
+            <SubmitApplicationForm />
+          </RequireAuth>
+        ),
       },
       {
         // view application (different in roles)
         path: ":id",
-        loader: applicationLoader,
-        element: <ViewApplicationDetails />,
+        loader: applicationsLoader,
+        element: (
+          <RequireAuth>
+            <ViewApplicationDetails />
+          </RequireAuth>
+        ),
       },
       {
         // update application (student only)
         path: ":id/update",
-        loader: applicationLoader,
-        element: <UpdateApplicationForm />,
+        loader: applicationsLoader,
+        element: (
+          <RequireAuth>
+            <UpdateApplicationForm />
+          </RequireAuth>
+        ),
       },
       {
         path: ":id/manage",
-        loader: applicationLoader,
-        element: <ManageApplicationDetails />,
+        loader: applicationsLoader,
+        element: (
+          <RequireAuth>
+            <ManageApplicationDetails />
+          </RequireAuth>
+        ),
       },
     ],
   },
   {
     path: "/test",
-    loader: applicationLoader,
+    loader: applicationsLoader,
     element: <ViewApplicationByStudent />,
   },
 ]);

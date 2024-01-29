@@ -14,15 +14,18 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import { Toaster } from "@/components/ui/toaster";
-import axiosInstance from "@/main";
+import { axiosInstance } from "@/lib/axiosInstance";
 
 const formSchema = z.object({
   email: z
     .string()
-    .min(1, { message: "Please input a valid user id or an email" }),
+    .min(1, { message: "Please input a valid user id or an email address" }),
 });
 
 function ForgotPassword() {
+  const { toast } = useToast();
+  const navigate = useNavigate();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -30,38 +33,36 @@ function ForgotPassword() {
     },
   });
 
-  const { toast } = useToast();
-
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    //find email/userid
-    console.log(values);
-
-    //send request
-    try {
-      const response = await axiosInstance.post(
-        "https://api.dosas.online/api/forgot-password",
-        values,
-        { withCredentials: true }
-      );
-
-      console.log(response);
-    } catch (error) {
-      console.error(error);
-    }
-
-    //show notification
-    toast({
-      variant: "default",
-      description: "An email with further instruction has been sent",
-    });
-
-    setTimeout(() => {
-      //redirect
-      navigate("/home");
-    }, 3000);
+  const handleBack = (e: any) => {
+    e.preventDefault();
+    navigate("/login");
   };
 
-  const navigate = useNavigate();
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    try {
+      const response = await axiosInstance.post(
+        "/api/forgot-password",
+        values
+      );
+      console.log(response);
+
+      toast({
+        variant: "default",
+        description: "An email with further instruction has been sent",
+      });
+
+      setTimeout(() => {
+        navigate("/home");
+      }, 1000);
+    } catch (error) {
+      console.error(error);
+
+      toast({
+        variant: "destructive",
+        description: "Error handling request",
+      });
+    }
+  };
 
   return (
     <Form {...form}>
@@ -81,11 +82,11 @@ function ForgotPassword() {
         <FormField
           control={form.control}
           name="email"
-          render={() => (
+          render={({ field }) => (
             <FormItem>
               <FormLabel>User ID or Email</FormLabel>
               <FormControl>
-                <Input placeholder="" />
+                <Input {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -96,7 +97,7 @@ function ForgotPassword() {
         <Button
           className="border border-black"
           variant="secondary"
-          onClick={() => navigate("/login")}
+          onClick={handleBack}
         >
           Go Back
         </Button>

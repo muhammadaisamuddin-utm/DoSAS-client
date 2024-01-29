@@ -15,8 +15,7 @@ import { useState } from "react";
 import { Link, useLoaderData, useNavigate, useParams } from "react-router-dom";
 
 import local_deferment_pdf from "../assets/UTMAMD01-Penangguhan-Pengajian-Pelajar-Tempatan-Pindaan-2022.pdf";
-import axiosInstance from "@/main";
-// import intl_deferment_pdf from "../assets/UTMAMD02-Deferment-of-Study-International-Student-Amendment-2022.pdf";
+import { axiosInstance } from "@/lib/axiosInstance";
 
 const formSchema = z.object({
   name: z.string(),
@@ -98,10 +97,8 @@ function ManageApplicationBySigner() {
     formData.append("action", "reject");
 
     const response = await axiosInstance.post(
-      `https://api.dosas.online/api/deferment-application/${id}/manage`,
-      // `http//localhost:8000/api/deferment-application/${id}/manage`,
-      formData,
-      { withCredentials: true }
+      `/api/deferment-application/${id}/manage`,
+      formData
     );
     console.log(response);
   };
@@ -116,10 +113,8 @@ function ManageApplicationBySigner() {
     console.log(comment);
 
     const response = await axiosInstance.post(
-      `https://api.dosas.online/api/deferment-application/${id}/manage`,
-      // `http//localhost:8000/api/deferment-application/${id}/manage`,
-      formData,
-      { withCredentials: true }
+      `/api/deferment-application/${id}/manage`,
+      formData
     );
     console.log(response);
   };

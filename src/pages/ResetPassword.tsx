@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import { Toaster } from "@/components/ui/toaster";
-import axiosInstance from "@/main";
+import { axiosInstance } from "@/lib/axiosInstance";
 
 const formSchema = z
   .object({
@@ -47,8 +47,14 @@ interface ResetPasswordProp {
 function ResetPassword({ isFirstTime }: Readonly<ResetPasswordProp>) {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
+
   const email = searchParams.get("email");
+
   const { token } = useParams();
+
+  const { toast } = useToast();
+
+  const navigate = useNavigate();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -58,40 +64,51 @@ function ResetPassword({ isFirstTime }: Readonly<ResetPasswordProp>) {
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    const body = {
-      token: token,
-      userid: email,
-      password: values.newPassword,
-      confirm_password: values.confirmPassword,
-    };
-
-    try {
-      const response = await axiosInstance.post(
-        "https://api.dosas.online/api/reset-password",
-        body,
-        { withCredentials: true }
-      );
-
-      console.log(response);
-    } catch (error) {
-      console.error(error);
-    }
-
-    toast({
-      variant: "default",
-      description: "Password updated successfully",
-    });
-
-    setTimeout(() => {
-      //redirect
-      navigate("/login");
-    }, 3000);
+  const handleBack = (e: any) => {
+    e.preventDefault();
+    navigate("/login");
   };
 
-  const { toast } = useToast();
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    let body;
 
-  const navigate = useNavigate();
+    if (isFirstTime) {
+      body = {
+        password: values.newPassword,
+        confirm_password: values.confirmPassword,
+      };
+    } else {
+      body = {
+        token: token,
+        userid: email,
+        password: values.newPassword,
+        confirm_password: values.confirmPassword,
+      };
+    }
+
+    try {
+      const response = await axiosInstance.post("/api/reset-password", body);
+
+      console.log(response);
+
+      toast({
+        variant: "default",
+        description: "Password updated successfully",
+      });
+
+      setTimeout(() => {
+        //redirect
+        navigate("/login");
+      }, 1000);
+    } catch (error) {
+      console.error(error);
+
+      toast({
+        variant: "destructive",
+        description: "Error handling request",
+      });
+    }
+  };
 
   return (
     <Form {...form}>
@@ -144,7 +161,7 @@ function ResetPassword({ isFirstTime }: Readonly<ResetPasswordProp>) {
           <Button
             className="border border-black"
             variant="secondary"
-            onClick={() => navigate("/login")}
+            onClick={handleBack}
           >
             Cancel
           </Button>

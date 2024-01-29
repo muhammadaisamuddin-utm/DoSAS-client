@@ -226,7 +226,7 @@ function ViewApplicationByOfficeAssistant() {
                 <Input
                   disabled
                   className="bg-gray-100 font-bold"
-                  value={application.deferment_reason}
+                  value={application.reason}
                 />
               </FormControl>
               <FormMessage />
@@ -245,7 +245,7 @@ function ViewApplicationByOfficeAssistant() {
                 <Input
                   disabled
                   className="bg-gray-100 font-bold"
-                  value={application.supervisor}
+                  value={application.main_supervisor}
                 />
               </FormControl>
               <FormMessage />
@@ -304,7 +304,7 @@ function ViewApplicationByOfficeAssistant() {
                 <Input
                   disabled
                   className="bg-gray-100 font-bold"
-                  value={application.proposal_defense_status}
+                  value={application.proposal_defence_status}
                 />
               </FormControl>
               <FormMessage />

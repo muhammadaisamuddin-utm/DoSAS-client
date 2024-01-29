@@ -35,6 +35,8 @@ function ViewApplicationByStudent() {
   let application: any;
   if (id) application = applications[id];
 
+  const navigate = useNavigate();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -44,7 +46,7 @@ function ViewApplicationByStudent() {
       program_code: application.program_code,
       program_name: application.program_name,
       faculty: application.faculty_name,
-      current_semester: application.current_semester,
+      current_semester: application.semester_name,
       nationality: application.nationality,
     },
   });
@@ -52,8 +54,6 @@ function ViewApplicationByStudent() {
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
   }
-
-  const navigate = useNavigate();
 
   return (
     <Form {...form}>
@@ -206,7 +206,6 @@ function ViewApplicationByStudent() {
                     disabled
                     className="bg-gray-100 font-bold"
                     value={application.semester_name}
-                    // value={application.semester_status}
                   />
                   <FormMessage />
                 </FormItem>
@@ -226,7 +225,7 @@ function ViewApplicationByStudent() {
                 <Input
                   disabled
                   className="bg-gray-100 font-bold"
-                  value={application.deferment_reason}
+                  value={application.reason}
                 />
               </FormControl>
               <FormMessage />
@@ -245,7 +244,7 @@ function ViewApplicationByStudent() {
                 <Input
                   disabled
                   className="bg-gray-100 font-bold"
-                  value={application.supervisor}
+                  value={application.main_supervisor}
                 />
               </FormControl>
               <FormMessage />
@@ -304,7 +303,7 @@ function ViewApplicationByStudent() {
                 <Input
                   disabled
                   className="bg-gray-100 font-bold"
-                  value={application.proposal_defense_status}
+                  value={application.proposal_defence_status}
                 />
               </FormControl>
               <FormMessage />

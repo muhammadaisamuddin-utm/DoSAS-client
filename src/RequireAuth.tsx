@@ -9,7 +9,6 @@ export function RequireAuth({ children }: Readonly<{ children: JSX.Element }>) {
   if (!token && !user) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
-  // return <Navigate to="/home" />;
 
   return children;
 }
