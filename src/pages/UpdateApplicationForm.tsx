@@ -11,10 +11,11 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { ChevronsUpDown, Plus } from "lucide-react";
-import { useNavigate, useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useLoaderData, useNavigate, useParams } from "react-router-dom";
 import { axiosInstance } from "@/lib/axiosInstance";
+import { useToast } from "@/components/ui/use-toast";
+import { Toaster } from "@/components/ui/toaster";
+import { useState } from "react";
 
 const formSchema = z.object({
   name: z.string(),
@@ -30,57 +31,99 @@ const formSchema = z.object({
   proposal_defense: z.string(),
   nht_completion_status: z.string(),
   deferment_history: z.string(),
+  rejection_reason: z.string(),
 });
 
-// const reasons = [
-//   {
-//     value: "Some information in deferment application form is not available",
-//     label: "Some information in deferment application form is not available",
-//   },
-//   { value: "Missing medical report", label: "Missing medical report" },
-//   { value: "Missing offical letter", label: "Missing official letter" },
-//   { value: "Missing signatures", label: "Missing signatures" },
-//   { value: "Others", label: "Others" },
-// ];
-
-// function onSubmit(values: z.infer<typeof formSchema>) {
-//   console.log(values);
-// }
-
-function UpdateApplicationForm() {
-  const [application, setApplication] = useState<any>();
-
+function UpdateApplicationByStudent() {
   let { id } = useParams();
+  const applications: any = useLoaderData();
+  let application: any;
+  if (id) application = applications[id];
+
+  const { toast } = useToast();
+
+  const [fileUpload, setFileUpload] = useState<any>(null);
+
+  const navigate = useNavigate();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    // defaulvalues for form fields
-    defaultValues: {},
+    defaultValues: {
+      name: application.name,
+      nric: application.identity_no,
+      student_id: application.userid,
+      program_code: application.program_code,
+      program_name: application.program_name,
+      faculty: application.faculty_name,
+      current_semester: application.semester_name,
+      nationality: application.nationality,
+    },
   });
 
-  const getApplication = async () => {
+  const handleDownloadFile = async (e: any) => {
+    e.preventDefault();
+
     try {
-      const response: any = await axiosInstance.get(
-        "/api/deferment-applications"
+      const response = await axiosInstance.post(
+        `/api/deferment-application/${application.id}/download`,
+        { file_type: "form" },
+        { responseType: "blob" }
       );
 
-      if (id) setApplication(response.deferment_applications[id]);
-    } catch (e) {
-      console.error(e);
+      console.log(response);
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "file.pdf");
+      document.body.appendChild(link);
+      link.click();
+    } catch (error) {
+      console.log(error);
+
+      toast({
+        variant: "destructive",
+        description: "Error handling request",
+      });
     }
   };
 
-  // const [open, setOpen] = useState(false);
-  // const [value, setValue] = useState("");
+  const handleSubmit = async () => {
+    try {
+      const formData = new FormData();
+      formData.append("pdf_form", fileUpload);
+
+      await axiosInstance.post(
+        `/api/deferment-application/${application.id}/update`,
+        formData
+      );
+
+      toast({
+        variant: "default",
+        description: "The deferment application has been updated",
+      });
+
+      setTimeout(() => {
+        navigate("/home");
+      }, 1000);
+    } catch (error) {
+      console.log(error);
+
+      toast({
+        variant: "destructive",
+        description: "Error handling request",
+      });
+    }
+  };
+
+  const handleFileUpload = (e: any) => {
+    e.preventDefault();
+    setFileUpload(e.target.files[0]);
+  };
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
   }
-
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    getApplication();
-  }, []);
 
   return (
     <Form {...form}>
@@ -89,11 +132,17 @@ function UpdateApplicationForm() {
         className="space-y-2 flex flex-col flex-wrap w-full max-w-lg justify-center mx-auto mt-2 mb-4"
       >
         <div className="flex relative items-center">
-          <Button className="z-40 w-20 h-8" onClick={() => navigate("/home")}>
+          <Button
+            className="z-40 w-20 h-8"
+            onClick={(e) => {
+              e.preventDefault();
+              navigate("/home");
+            }}
+          >
             Back
           </Button>
           <span className="absolute mx-auto w-full text-center font-bold">
-            Update Student Deferment Application
+            Student Deferment Application View
           </span>
         </div>
         <div className="w-full flex space-x-4 justify-between">
@@ -106,9 +155,9 @@ function UpdateApplicationForm() {
                 <FormLabel className="">Name</FormLabel>
                 <FormControl>
                   <Input
-                    className="bg-gray-100"
-                    value={application.name}
                     disabled
+                    className="bg-gray-100 font-bold"
+                    value={application.name}
                   />
                 </FormControl>
                 <FormMessage />
@@ -125,9 +174,9 @@ function UpdateApplicationForm() {
                 <FormLabel className="">IC/ISID</FormLabel>
                 <FormControl>
                   <Input
-                    className="bg-gray-100"
-                    value={application.identity_no}
                     disabled
+                    className="bg-gray-100 font-bold"
+                    value={application.identity_no}
                   />
                 </FormControl>
                 <FormMessage />
@@ -144,9 +193,9 @@ function UpdateApplicationForm() {
                 <FormLabel className="">Student ID</FormLabel>
                 <FormControl>
                   <Input
-                    className="bg-gray-100"
-                    value={application.identity_no}
                     disabled
+                    className="bg-gray-100 font-bold"
+                    value={application.userid}
                   />
                 </FormControl>
                 <FormMessage />
@@ -165,9 +214,9 @@ function UpdateApplicationForm() {
                 <FormItem>
                   <FormLabel>Program Code</FormLabel>
                   <Input
-                    className="bg-gray-100"
-                    value={application.program_code}
                     disabled
+                    className="bg-gray-100 font-bold"
+                    value={application.program_code}
                   />
                   <FormMessage />
                 </FormItem>
@@ -184,9 +233,9 @@ function UpdateApplicationForm() {
                 <FormItem>
                   <FormLabel>Program Name</FormLabel>
                   <Input
-                    className="bg-gray-100"
-                    value={application.program_name}
                     disabled
+                    className="bg-gray-100 font-bold"
+                    value={application.program_name}
                   />
                   <FormMessage />
                 </FormItem>
@@ -205,9 +254,9 @@ function UpdateApplicationForm() {
                 <FormItem>
                   <FormLabel>Faculty</FormLabel>
                   <Input
-                    className="bg-gray-100"
-                    value={application.program_name}
                     disabled
+                    className="bg-gray-100 font-bold"
+                    value={application.faculty_name}
                   />
                   <FormMessage />
                 </FormItem>
@@ -224,9 +273,9 @@ function UpdateApplicationForm() {
                 <FormItem>
                   <FormLabel>Current Semester</FormLabel>
                   <Input
-                    className="bg-gray-100"
-                    value={application.current_semester}
                     disabled
+                    className="bg-gray-100 font-bold"
+                    value={application.semester_name}
                   />
                   <FormMessage />
                 </FormItem>
@@ -235,7 +284,7 @@ function UpdateApplicationForm() {
           </div>
         </div>
 
-        {/* proposal_defense */}
+        {/* deferment_reason */}
         <FormField
           control={form.control}
           name="proposal_defense"
@@ -243,19 +292,12 @@ function UpdateApplicationForm() {
             <FormItem>
               <FormLabel>Deferment Reason</FormLabel>
               <FormControl>
-                {/* <Input
-                  className="bg-gray-100"
-                  {...field}
-                /> */}
+                <Input
+                  disabled
+                  className="bg-gray-100 font-bold"
+                  value={application.reason}
+                />
               </FormControl>
-              <Button
-                variant="outline"
-                role="combobox"
-                // aria-expanded={open}
-                className="w-full justify-end"
-              >
-                <ChevronsUpDown className="  shrink-0 " />
-              </Button>
               <FormMessage />
             </FormItem>
           )}
@@ -270,9 +312,9 @@ function UpdateApplicationForm() {
               <FormLabel>Main Supervisor</FormLabel>
               <FormControl>
                 <Input
-                  className=""
+                  disabled
+                  className="bg-gray-100 font-bold"
                   value={application.main_supervisor}
-                  // {...field}
                 />
               </FormControl>
               <FormMessage />
@@ -289,10 +331,11 @@ function UpdateApplicationForm() {
               <FormLabel>Co-Supervisor</FormLabel>
               <FormControl>
                 <div className="flex space-x-2">
-                  <Input className="" value={application.co_supervisor} />
-                  <Button variant="outline" className="">
-                    <Plus className="  shrink-0 " />
-                  </Button>
+                  <Input
+                    disabled
+                    className="bg-gray-100 font-bold"
+                    value={application.co_supervisor}
+                  />
                 </div>
               </FormControl>
               <FormMessage />
@@ -309,9 +352,9 @@ function UpdateApplicationForm() {
               <FormLabel>Nationality</FormLabel>
               <FormControl>
                 <Input
-                  className="bg-gray-100"
-                  value={application.nationality}
                   disabled
+                  className="bg-gray-100 font-bold"
+                  value={application.nationality}
                 />
               </FormControl>
               <FormMessage />
@@ -328,9 +371,9 @@ function UpdateApplicationForm() {
               <FormLabel>Proposal Defense</FormLabel>
               <FormControl>
                 <Input
-                  className=""
-                  placeholder=""
-                  value={application.proposal_defense}
+                  disabled
+                  className="bg-gray-100 font-bold"
+                  value={application.proposal_defence_status}
                 />
               </FormControl>
               <FormMessage />
@@ -346,35 +389,10 @@ function UpdateApplicationForm() {
             <FormItem>
               <FormLabel>NHT Completion Status</FormLabel>
               <FormControl>
-                <Input className="" value={application.nht_completion_status} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <div className="my-4 py-2">
-          <Button variant="secondary">
-            Download Deferment Application Form
-          </Button>
-        </div>
-
-        <div className="my-4 py-2">
-          <FormLabel>Upload Deferment Application Form</FormLabel>
-          <Input type="file" />
-        </div>
-
-        <FormField
-          control={form.control}
-          name="nationality"
-          render={() => (
-            <FormItem>
-              <FormLabel>Rejection Reasons</FormLabel>
-              <FormControl>
                 <Input
-                  className="bg-gray-100"
-                  placeholder="Not enough information"
                   disabled
+                  className="bg-gray-100 font-bold"
+                  value={application.nht_completion_status}
                 />
               </FormControl>
               <FormMessage />
@@ -382,16 +400,46 @@ function UpdateApplicationForm() {
           )}
         />
 
-        <br />
+        {/* rejection reason */}
+        <FormField
+          control={form.control}
+          name="rejection_reason"
+          render={() => (
+            <FormItem>
+              <FormLabel>Rejection Reason</FormLabel>
+              <FormControl>
+                <Input
+                  className="font-bold"
+                  disabled
+                  value={application.rejection_reason}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
-        <div className="flex w-full justify-around">
-          <Button className="text-right w-full mx-1" type="submit">
-            Update Application
-          </Button>
+        <Button variant="secondary" onClick={handleDownloadFile}>
+          Download Deferment Application Form
+        </Button>
+
+        <div className="my-4 py-2">
+          <FormLabel>Upload Form</FormLabel>
+          <Input id="pdf_file" type="file" onChange={handleFileUpload} />
         </div>
+
+        <Button
+          className="text-right w-full mx-1"
+          onClick={() => {
+            handleSubmit();
+          }}
+        >
+          Submit
+        </Button>
+        <Toaster />
       </form>
     </Form>
   );
 }
 
-export default UpdateApplicationForm;
+export default UpdateApplicationByStudent;
