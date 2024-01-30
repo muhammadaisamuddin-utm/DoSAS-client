@@ -12,6 +12,9 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useLoaderData, useNavigate, useParams } from "react-router-dom";
+import { axiosInstance } from "@/lib/axiosInstance";
+import { useToast } from "@/components/ui/use-toast";
+import { Toaster } from "@/components/ui/toaster";
 
 const formSchema = z.object({
   name: z.string(),
@@ -35,6 +38,8 @@ function ViewApplicationByStudent() {
   let application: any;
   if (id) application = applications[id];
 
+  const { toast } = useToast();
+
   const navigate = useNavigate();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -50,6 +55,34 @@ function ViewApplicationByStudent() {
       nationality: application.nationality,
     },
   });
+
+  const handleDownloadFile = async (e: any) => {
+    e.preventDefault();
+
+    try {
+      const response = await axiosInstance.post(
+        `/api/deferment-application/${application.id}/download`,
+        { file_type: "form" },
+        { responseType: "blob" }
+      );
+
+      console.log(response);
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "file.pdf");
+      document.body.appendChild(link);
+      link.click();
+    } catch (error) {
+      console.log(error);
+
+      toast({
+        variant: "destructive",
+        description: "Error handling request",
+      });
+    }
+  };
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
@@ -330,6 +363,10 @@ function ViewApplicationByStudent() {
           )}
         />
 
+        <Button variant="secondary" onClick={handleDownloadFile}>
+          Download Deferment Application Form
+        </Button>
+
         <Button
           className="text-right w-full mx-1"
           onClick={(e) => {
@@ -339,6 +376,7 @@ function ViewApplicationByStudent() {
         >
           Go Back
         </Button>
+        <Toaster />
       </form>
     </Form>
   );

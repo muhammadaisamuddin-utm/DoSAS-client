@@ -87,9 +87,11 @@ function ResetPassword({ isFirstTime }: Readonly<ResetPasswordProp>) {
     }
 
     try {
-      const response = await axiosInstance.post("/api/reset-password", body);
-
-      console.log(response);
+      if (isFirstTime) {
+        await axiosInstance.post("/api/first-reset-password", body);
+      } else {
+        await axiosInstance.post("/api/reset-password", body);
+      }
 
       toast({
         variant: "default",

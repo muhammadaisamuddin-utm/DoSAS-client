@@ -1,6 +1,7 @@
 import { useAuth } from "@/authContext";
 import ManageApplicationByOfficeAssistant from "./ManageApplicationByOfficeAssistant";
-import ManageApplicationBySigner from "./ManageApplicationBySigner";
+import ManageApplicationBySupervisor from "./ManageApplicationBySupervisor";
+import ManageApplicationByProgramCoordinator from "./ManageApplicationByProgramCoordinator";
 
 function ManageApplicationDetails() {
   const { user } = useAuth();
@@ -12,10 +13,9 @@ function ManageApplicationDetails() {
 
   return (
     <>
-      {/* {role === "STUDENT" && <ViewApplicationByStudent />} */}
       {role === "ACADEMIC_ASSISTANT" && <ManageApplicationByOfficeAssistant />}
-      {role === "SUPERVISOR" ||
-        (role === "PROGRAM_COORDINATOR" && <ManageApplicationBySigner />)}
+      {role === "SUPERVISOR" && <ManageApplicationBySupervisor />}
+      {role === "PROGRAM_COORDINATOR" && <ManageApplicationByProgramCoordinator />}
     </>
   );
 }

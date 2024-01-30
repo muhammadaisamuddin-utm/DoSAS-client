@@ -11,29 +11,47 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useState } from "react";
 import { useLoaderData, useNavigate, useParams } from "react-router-dom";
-import { useToast } from "@/components/ui/use-toast";
+
 import { axiosInstance } from "@/lib/axiosInstance";
 import { Toaster } from "@/components/ui/toaster";
+import { useToast } from "@/components/ui/use-toast";
 import { getStatusColor } from "@/lib/statusColor";
 
 const formSchema = z.object({
   name: z.string(),
-  nric: z.string(),
-  student_id: z.string(),
+  identity_no: z.string(),
+  userid: z.string(),
   program_code: z.string(),
-  faculty: z.string(),
   program_name: z.string(),
-  current_semester: z.string(),
+  faculty: z.string(),
+  current_semester: z.number().optional(),
+  deferment_reason: z.string(),
+  other: z.string(),
   main_supervisor: z.string(),
-  co_supervisor: z.string(),
+  co_supervisor: z.string().optional(),
   nationality: z.string(),
-  proposal_defense: z.string(),
-  nht_completion_status: z.string(),
-  deferment_history: z.string(),
+  proposal_defense: z.boolean().optional(),
+  nht_completion_status: z.boolean().optional(),
+  rejection_reason: z.string().optional(),
+  comment: z.string().optional(),
+  // others: z.string(),
+  pdf_file: z.any(),
 });
 
-function ViewApplicationByOfficeAssistant() {
+// const reasons = [
+//   {
+//     value: "some information in deferment application form is not available",
+//     label: "Some information in deferment application form is not available",
+//   },
+//   { value: "missing medical report", label: "Missing medical report" },
+//   { value: "missing offical letter", label: "Missing official letter" },
+//   { value: "missing signatures", label: "Missing signatures" },
+//   { value: "others", label: "Others" },
+// ];
+
+function ManageApplicationBySupervisor() {
   let { id } = useParams();
   const applications: any = useLoaderData();
   let application: any;
@@ -41,19 +59,70 @@ function ViewApplicationByOfficeAssistant() {
 
   const { toast } = useToast();
 
+  const [fileUpload, setFileUpload] = useState<any>(null);
+
+  const [comment, setComment] = useState("");
+  const [rejectionReason, setRejectionReason] = useState("");
+
+  // const [isOther, setIsOther] = useState<boolean>(false);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: application.name,
-      nric: application.identity_no,
-      student_id: application.userid,
-      program_code: application.program_code,
-      program_name: application.program_name,
-      faculty: application.faculty_name,
-      current_semester: application.current_semester,
-      nationality: application.nationality,
+      name: "",
+      identity_no: "",
+      userid: "",
+      program_code: "",
+      program_name: "",
+      faculty: "",
+      current_semester: undefined,
+      deferment_reason: "",
+      main_supervisor: "",
+      co_supervisor: "",
+      nationality: "",
+      proposal_defense: undefined,
+      nht_completion_status: undefined,
+      comment: "",
+      other: "",
     },
   });
+
+  // const [value, setValue] = useState("");
+
+  // function onSubmit(values: z.infer<typeof formSchema>) {
+  //   console.log(values);
+  // }
+
+  const navigate = useNavigate();
+
+  const handleReject = async (e: any) => {
+    e.preventDefault();
+
+    try {
+      const formData = new FormData();
+      formData.append("rejection_reason", rejectionReason);
+      formData.append("action", "reject");
+
+      await axiosInstance.post(
+        `/api/deferment-application/${application.id}/manage`,
+        formData
+      );
+
+      toast({
+        variant: "default",
+        description: "The deferment application has been checked",
+      });
+
+      setTimeout(() => {
+        navigate("/home");
+      }, 1000);
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        description: "Error handling request",
+      });
+    }
+  };
 
   const handleDownloadFile = async (e: any) => {
     e.preventDefault();
@@ -83,16 +152,45 @@ function ViewApplicationByOfficeAssistant() {
     }
   };
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-  }
+  const handleEndorse = async (e: any) => {
+    e.preventDefault();
+    try {
+      const formData = new FormData();
+      formData.append("comment", comment);
+      formData.append("action", "endorse");
+      formData.append("pdf_form", fileUpload);
+      console.log(comment);
 
-  const navigate = useNavigate();
+      await axiosInstance.post(
+        `/api/deferment-application/${application.id}/manage`,
+        formData
+      );
+
+      toast({
+        variant: "default",
+        description: "The deferment application has been checked",
+      });
+
+      setTimeout(() => {
+        navigate("/home");
+      }, 1000);
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        description: "Error handling request",
+      });
+    }
+  };
+
+  const handleFileUpload = (e: any) => {
+    e.preventDefault();
+    setFileUpload(e.target.files[0]);
+  };
 
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit(onSubmit)}
+        // onSubmit={form.handleSubmit(onSubmit)}
         className="space-y-2 flex flex-col flex-wrap w-full max-w-lg justify-center mx-auto mt-2 mb-4"
       >
         <div className="flex relative items-center">
@@ -106,12 +204,16 @@ function ViewApplicationByOfficeAssistant() {
             Back
           </Button>
           <span className="absolute mx-auto w-full text-center font-bold">
-            Student Deferment Application View
+            Manage Student Deferment Application
           </span>
         </div>
         <div className="flex justify-center">
           <div className="text-xl font-bold uppercase">STATUS: &nbsp;</div>
-          <div className={`text-xl font-bold uppercase text-${getStatusColor(application.status)}-500`}>
+          <div
+            className={`text-xl font-bold uppercase text-${getStatusColor(
+              application.status
+            )}-500`}
+          >
             {application.status}
           </div>
         </div>
@@ -125,9 +227,9 @@ function ViewApplicationByOfficeAssistant() {
                 <FormLabel className="">Name</FormLabel>
                 <FormControl>
                   <Input
-                    disabled
                     className="bg-gray-100 font-bold"
                     value={application.name}
+                    disabled
                   />
                 </FormControl>
                 <FormMessage />
@@ -135,18 +237,18 @@ function ViewApplicationByOfficeAssistant() {
             )}
           />
 
-          {/* nric */}
+          {/* identity_no */}
           <FormField
             control={form.control}
-            name="nric"
+            name="identity_no"
             render={() => (
               <FormItem>
                 <FormLabel className="">IC/ISID</FormLabel>
                 <FormControl>
                   <Input
-                    disabled
                     className="bg-gray-100 font-bold"
                     value={application.identity_no}
+                    disabled
                   />
                 </FormControl>
                 <FormMessage />
@@ -157,15 +259,15 @@ function ViewApplicationByOfficeAssistant() {
           {/* matric card */}
           <FormField
             control={form.control}
-            name="student_id"
+            name="userid"
             render={() => (
               <FormItem>
                 <FormLabel className="">Student ID</FormLabel>
                 <FormControl>
                   <Input
-                    disabled
                     className="bg-gray-100 font-bold"
                     value={application.userid}
+                    disabled
                   />
                 </FormControl>
                 <FormMessage />
@@ -180,13 +282,14 @@ function ViewApplicationByOfficeAssistant() {
             <FormField
               control={form.control}
               name="program_code"
+              defaultValue="" //
               render={() => (
                 <FormItem>
                   <FormLabel>Program Code</FormLabel>
                   <Input
-                    disabled
                     className="bg-gray-100 font-bold"
                     value={application.program_code}
+                    disabled
                   />
                   <FormMessage />
                 </FormItem>
@@ -199,13 +302,14 @@ function ViewApplicationByOfficeAssistant() {
             <FormField
               control={form.control}
               name="program_name"
+              defaultValue="" //
               render={() => (
                 <FormItem>
-                  <FormLabel>Program Name</FormLabel>
+                  <FormLabel className="">Program Name</FormLabel>
                   <Input
-                    disabled
                     className="bg-gray-100 font-bold"
                     value={application.program_name}
+                    disabled
                   />
                   <FormMessage />
                 </FormItem>
@@ -224,9 +328,9 @@ function ViewApplicationByOfficeAssistant() {
                 <FormItem>
                   <FormLabel>Faculty</FormLabel>
                   <Input
-                    disabled
                     className="bg-gray-100 font-bold"
                     value={application.faculty_name}
+                    disabled
                   />
                   <FormMessage />
                 </FormItem>
@@ -243,10 +347,9 @@ function ViewApplicationByOfficeAssistant() {
                 <FormItem>
                   <FormLabel>Current Semester</FormLabel>
                   <Input
-                    disabled
                     className="bg-gray-100 font-bold"
                     value={application.semester_name}
-                    // value={application.semester_status}
+                    disabled
                   />
                   <FormMessage />
                 </FormItem>
@@ -255,18 +358,22 @@ function ViewApplicationByOfficeAssistant() {
           </div>
         </div>
 
-        {/* deferment_reason */}
+        {/* deferment reason */}
         <FormField
           control={form.control}
-          name="proposal_defense"
+          name="deferment_reason"
           render={() => (
             <FormItem>
               <FormLabel>Deferment Reason</FormLabel>
               <FormControl>
                 <Input
-                  disabled
                   className="bg-gray-100 font-bold"
-                  value={application.reason}
+                  value={
+                    application.reason === "other"
+                      ? application.reason
+                      : application.others
+                  }
+                  disabled
                 />
               </FormControl>
               <FormMessage />
@@ -283,9 +390,9 @@ function ViewApplicationByOfficeAssistant() {
               <FormLabel>Main Supervisor</FormLabel>
               <FormControl>
                 <Input
-                  disabled
                   className="bg-gray-100 font-bold"
-                  value={application.main_supervisor}
+                  value={application.supervisor}
+                  disabled
                 />
               </FormControl>
               <FormMessage />
@@ -303,9 +410,9 @@ function ViewApplicationByOfficeAssistant() {
               <FormControl>
                 <div className="flex space-x-2">
                   <Input
-                    disabled
                     className="bg-gray-100 font-bold"
                     value={application.co_supervisor}
+                    disabled
                   />
                 </div>
               </FormControl>
@@ -323,9 +430,9 @@ function ViewApplicationByOfficeAssistant() {
               <FormLabel>Nationality</FormLabel>
               <FormControl>
                 <Input
-                  disabled
                   className="bg-gray-100 font-bold"
                   value={application.nationality}
+                  disabled
                 />
               </FormControl>
               <FormMessage />
@@ -342,9 +449,9 @@ function ViewApplicationByOfficeAssistant() {
               <FormLabel>Proposal Defense</FormLabel>
               <FormControl>
                 <Input
-                  disabled
                   className="bg-gray-100 font-bold"
                   value={application.proposal_defence_status}
+                  disabled
                 />
               </FormControl>
               <FormMessage />
@@ -361,9 +468,53 @@ function ViewApplicationByOfficeAssistant() {
               <FormLabel>NHT Completion Status</FormLabel>
               <FormControl>
                 <Input
-                  disabled
                   className="bg-gray-100 font-bold"
                   value={application.nht_completion_status}
+                  disabled
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {/* rejection reason */}
+        <FormField
+          control={form.control}
+          name="comment"
+          render={(field) => (
+            <FormItem>
+              <FormLabel>Rejection Reason</FormLabel>
+              <FormControl>
+                <Input
+                  className="font-bold"
+                  {...field}
+                  onChange={(e) => {
+                    e.preventDefault();
+                    setRejectionReason(e.target.value);
+                  }}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {/* comment */}
+        <FormField
+          control={form.control}
+          name="comment"
+          render={(field) => (
+            <FormItem>
+              <FormLabel>Comment</FormLabel>
+              <FormControl>
+                <Input
+                  className="font-bold"
+                  {...field}
+                  onChange={(e) => {
+                    e.preventDefault();
+                    setComment(e.target.value);
+                  }}
                 />
               </FormControl>
               <FormMessage />
@@ -375,15 +526,120 @@ function ViewApplicationByOfficeAssistant() {
           Download Deferment Application Form
         </Button>
 
-        <Button
-          className="text-right w-full mx-1"
-          onClick={(e) => {
-            e.preventDefault();
-            navigate("/home");
-          }}
-        >
-          Go Back
-        </Button>
+        <div className="my-4 py-2">
+          <FormLabel>Upload Form</FormLabel>
+          <Input id="pdf_file" type="file" onChange={handleFileUpload} />
+        </div>
+
+        {/* rejection reason */}
+        {/* <FormField
+          control={form.control}
+          name="comment"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Rejection Reason</FormLabel>
+              <Select
+                onValueChange={(e) => {
+                  field.onChange(e);
+                  if (e === "others") {
+                    setIsOther(true);
+                  } else {
+                    setIsOther(false);
+                  }
+                }}
+                // defaultValue={field.value}
+              >
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a deferment reason" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {reasons.map((reason) => {
+                    return (
+                      <SelectItem key={reason.value} value={reason.value}>
+                        {reason.label}
+                      </SelectItem>
+                    );
+                  })}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {isOther && (
+          // others
+          <FormField
+            control={form.control}
+            name="other"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Other Reason</FormLabel>
+                <FormControl>
+                  <Input className="" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )} */}
+
+        <div className="flex w-full justify-around">
+          <Button
+            variant="destructive"
+            className="text-right bg-red-500 w-full mx-1"
+            type="submit"
+            onClick={(e) => handleReject(e)}
+          >
+            Reject
+          </Button>
+          <Button
+            variant="default"
+            className="text-right bg-green-700 w-full mx-1"
+            type="submit"
+            onClick={(e) => handleEndorse(e)}
+          >
+            Endorse
+          </Button>
+        </div>
+
+        {/* {value === "" ? (
+          <div className="flex w-full justify-around">
+            <Button
+              disabled
+              variant="destructive"
+              className="text-right bg-gray-500 w-full mx-1"
+            >
+              Reject
+            </Button>
+            <Button
+              variant="default"
+              className="text-right bg-green-700 w-full mx-1"
+              type="submit"
+            >
+              Check
+            </Button>
+          </div>
+        ) : (
+          <div className="flex w-full justify-around">
+            <Button
+              variant="destructive"
+              className="text-right bg-red-500 w-full mx-1"
+              type="submit"
+            >
+              Reject
+            </Button>
+            <Button
+              disabled
+              variant="default"
+              className="text-right bg-gray-700 w-full mx-1"
+            >
+              Check
+            </Button>
+          </div>
+        )} */}
 
         <Toaster />
       </form>
@@ -391,4 +647,4 @@ function ViewApplicationByOfficeAssistant() {
   );
 }
 
-export default ViewApplicationByOfficeAssistant;
+export default ManageApplicationBySupervisor;

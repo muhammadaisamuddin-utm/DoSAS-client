@@ -12,10 +12,12 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
-import { Link, useLoaderData, useNavigate, useParams } from "react-router-dom";
+import { useLoaderData, useNavigate, useParams } from "react-router-dom";
 
-import local_deferment_pdf from "../assets/UTMAMD01-Penangguhan-Pengajian-Pelajar-Tempatan-Pindaan-2022.pdf";
 import { axiosInstance } from "@/lib/axiosInstance";
+import { Toaster } from "@/components/ui/toaster";
+import { useToast } from "@/components/ui/use-toast";
+import { getStatusColor } from "@/lib/statusColor";
 
 const formSchema = z.object({
   name: z.string(),
@@ -56,6 +58,8 @@ function ManageApplicationByOfficeAssistant() {
 
   const [rejectionReason, setRejectionReason] = useState("");
 
+  const { toast } = useToast();
+
   // const [isOther, setIsOther] = useState<boolean>(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -90,28 +94,95 @@ function ManageApplicationByOfficeAssistant() {
   const handleReject = async (e: any) => {
     e.preventDefault();
 
-    const formData = new FormData();
-    formData.append("rejection_reason", rejectionReason);
-    formData.append("action", "reject");
+    try {
+      const formData = new FormData();
+      formData.append("rejection_reason", rejectionReason);
+      formData.append("action", "reject");
 
-    const response = await axiosInstance.post(
-      `/api/deferment-application/${id}/manage`,
-      formData
-    );
-    console.log(response);
+      await axiosInstance.post(
+        `/api/deferment-application/${application.id}/manage`,
+        formData
+      );
+
+      toast({
+        variant: "default",
+        description: "The deferment application has been rejected",
+      });
+
+      setTimeout(() => {
+        navigate("/home");
+      }, 1000);
+    } catch (error) {
+      console.log(error);
+
+      toast({
+        variant: "destructive",
+        description: "Error handling request",
+      });
+    }
+  };
+
+  const handleDownloadFile = async (e: any) => {
+    e.preventDefault();
+
+    try {
+      const response = await axiosInstance.post(
+        `/api/deferment-application/${application.id}/download`,
+        { file_type: "form" },
+        { responseType: "blob" }
+      );
+
+      console.log(response);
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "file.pdf");
+      document.body.appendChild(link);
+      link.click();
+    } catch (error) {
+      console.log(error);
+
+      toast({
+        variant: "destructive",
+        description: "Error handling request",
+      });
+    }
+  };
+
+  const handleBack = (e: any) => {
+    e.preventDefault();
+    navigate("/home");
   };
 
   const handleCheck = async (e: any) => {
     e.preventDefault();
 
-    const formData = new FormData();
-    formData.append("action", "check");
+    try {
+      const formData = new FormData();
+      formData.append("action", "check");
 
-    const response = await axiosInstance.post(
-      `/api/deferment-application/${id}/manage`,
-      formData
-    );
-    console.log(response);
+      await axiosInstance.post(
+        `/api/deferment-application/${application.id}/manage`,
+        formData
+      );
+
+      toast({
+        variant: "default",
+        description: "The deferment application has been checked",
+      });
+
+      setTimeout(() => {
+        navigate("/home");
+      }, 1000);
+    } catch (error) {
+      console.log(error);
+
+      toast({
+        variant: "destructive",
+        description: "Error handling request",
+      });
+    }
   };
 
   return (
@@ -121,18 +192,23 @@ function ManageApplicationByOfficeAssistant() {
         className="space-y-2 flex flex-col flex-wrap w-full max-w-lg justify-center mx-auto mt-2 mb-4"
       >
         <div className="flex relative items-center">
-          <Button
-            className="z-40 w-20 h-8"
-            onClick={(e) => {
-              e.preventDefault();
-              navigate("/home");
-            }}
-          >
+          <Button className="z-40 w-20 h-8" onClick={(e) => handleBack(e)}>
             Back
           </Button>
           <span className="absolute mx-auto w-full text-center font-bold">
             Manage Student Deferment Application
           </span>
+        </div>
+
+        <div className="flex justify-center">
+          <div className="text-xl font-bold uppercase">STATUS: &nbsp;</div>
+          <div
+            className={`text-xl font-bold uppercase text-${getStatusColor(
+              application.status
+            )}-500`}
+          >
+            {application.status}
+          </div>
         </div>
         <div className="w-full flex space-x-4 justify-between">
           {/* name */}
@@ -417,15 +493,8 @@ function ManageApplicationByOfficeAssistant() {
           )}
         />
 
-        <Button variant="secondary">
-          <Link
-            to={local_deferment_pdf} // need to change this
-            download="UTMAMD01-Penangguhan-Pengajian-Pelajar-Tempatan-Pindaan-2022.pdf"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Download Student Deferment Application Form
-          </Link>
+        <Button variant="secondary" onClick={handleDownloadFile}>
+          Download Deferment Application Form
         </Button>
 
         {/* rejection reason */}
@@ -537,6 +606,7 @@ function ManageApplicationByOfficeAssistant() {
             </Button>
           </div>
         )} */}
+        <Toaster />
       </form>
     </Form>
   );

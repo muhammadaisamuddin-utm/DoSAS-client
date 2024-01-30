@@ -12,10 +12,12 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
-import { Link, useLoaderData, useNavigate, useParams } from "react-router-dom";
+import { useLoaderData, useNavigate, useParams } from "react-router-dom";
 
-import local_deferment_pdf from "../assets/UTMAMD01-Penangguhan-Pengajian-Pelajar-Tempatan-Pindaan-2022.pdf";
 import { axiosInstance } from "@/lib/axiosInstance";
+import { Toaster } from "@/components/ui/toaster";
+import { useToast } from "@/components/ui/use-toast";
+import { getStatusColor } from "@/lib/statusColor";
 
 const formSchema = z.object({
   name: z.string(),
@@ -32,7 +34,8 @@ const formSchema = z.object({
   nationality: z.string(),
   proposal_defense: z.boolean().optional(),
   nht_completion_status: z.boolean().optional(),
-  comment: z.string(),
+  rejection_reason: z.string().optional(),
+  comment: z.string().optional(),
   // others: z.string(),
   pdf_file: z.any(),
 });
@@ -48,15 +51,18 @@ const formSchema = z.object({
 //   { value: "others", label: "Others" },
 // ];
 
-function ManageApplicationBySigner() {
+function ManageApplicationByProgramCoordinator() {
   let { id } = useParams();
   const applications: any = useLoaderData();
   let application: any;
   if (id) application = applications[id];
 
+  const { toast } = useToast();
+
   const [fileUpload, setFileUpload] = useState<any>(null);
 
   const [comment, setComment] = useState("");
+  const [rejectionReason, setRejectionReason] = useState("");
 
   // const [isOther, setIsOther] = useState<boolean>(false);
 
@@ -92,31 +98,80 @@ function ManageApplicationBySigner() {
   const handleReject = async (e: any) => {
     e.preventDefault();
 
-    const formData = new FormData();
-    formData.append("comment", comment);
-    formData.append("action", "reject");
+    try {
+      const formData = new FormData();
+      formData.append("rejection_reason", rejectionReason);
+      formData.append("action", "reject");
 
-    const response = await axiosInstance.post(
-      `/api/deferment-application/${id}/manage`,
-      formData
-    );
-    console.log(response);
+      await axiosInstance.post(
+        `/api/deferment-application/${application.id}/manage`,
+        formData
+      );
+    } catch (error) {
+      console.log(error);
+
+      toast({
+        variant: "destructive",
+        description: "Error handling request",
+      });
+    }
   };
 
-  const handleEndorse = async (e: any) => {
+  const handleDownloadFile = async (e: any) => {
     e.preventDefault();
 
-    const formData = new FormData();
-    formData.append("comment", comment);
-    formData.append("action", "endorse");
-    formData.append("pdf_form", fileUpload);
-    console.log(comment);
+    try {
+      const response = await axiosInstance.post(
+        `/api/deferment-application/${application.id}/download`,
+        { file_type: "form" },
+        { responseType: "blob" }
+      );
 
-    const response = await axiosInstance.post(
-      `/api/deferment-application/${id}/manage`,
-      formData
-    );
-    console.log(response);
+      console.log(response);
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "file.pdf");
+      document.body.appendChild(link);
+      link.click();
+    } catch (error) {
+      console.log(error);
+
+      toast({
+        variant: "destructive",
+        description: "Error handling request",
+      });
+    }
+  };
+
+  const handleApprove = async (e: any) => {
+    e.preventDefault();
+    try {
+      const formData = new FormData();
+      formData.append("comment", comment);
+      formData.append("action", "approve");
+      formData.append("approval_proof", fileUpload);
+
+      await axiosInstance.post(
+        `/api/deferment-application/${application.id}/manage`,
+        formData
+      );
+
+      toast({
+        variant: "default",
+        description: "The deferment application has been checked",
+      });
+
+      setTimeout(() => {
+        navigate("/home");
+      }, 1000);
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        description: "Error handling request",
+      });
+    }
   };
 
   const handleFileUpload = (e: any) => {
@@ -143,6 +198,16 @@ function ManageApplicationBySigner() {
           <span className="absolute mx-auto w-full text-center font-bold">
             Manage Student Deferment Application
           </span>
+        </div>
+        <div className="flex justify-center">
+          <div className="text-xl font-bold uppercase">STATUS: &nbsp;</div>
+          <div
+            className={`text-xl font-bold uppercase text-${getStatusColor(
+              application.status
+            )}-500`}
+          >
+            {application.status}
+          </div>
         </div>
         <div className="w-full flex space-x-4 justify-between">
           {/* name */}
@@ -408,10 +473,32 @@ function ManageApplicationBySigner() {
         {/* rejection reason */}
         <FormField
           control={form.control}
-          name="comment"
+          name="rejection_reason"
           render={(field) => (
             <FormItem>
               <FormLabel>Rejection Reason</FormLabel>
+              <FormControl>
+                <Input
+                  className="font-bold"
+                  {...field}
+                  onChange={(e) => {
+                    e.preventDefault();
+                    setRejectionReason(e.target.value);
+                  }}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {/* comment */}
+        <FormField
+          control={form.control}
+          name="comment"
+          render={(field) => (
+            <FormItem>
+              <FormLabel>Comment</FormLabel>
               <FormControl>
                 <Input
                   className="font-bold"
@@ -427,19 +514,12 @@ function ManageApplicationBySigner() {
           )}
         />
 
-        <Button variant="secondary">
-          <Link
-            to={local_deferment_pdf} // need to change this
-            download="UTMAMD01-Penangguhan-Pengajian-Pelajar-Tempatan-Pindaan-2022.pdf"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Download Student Deferment Application Form
-          </Link>
+        <Button variant="secondary" onClick={handleDownloadFile}>
+          Download Deferment Application Form
         </Button>
 
         <div className="my-4 py-2">
-          <FormLabel>Upload Deferment Application Form</FormLabel>
+          <FormLabel>Upload Approval Proof</FormLabel>
           <Input id="pdf_file" type="file" onChange={handleFileUpload} />
         </div>
 
@@ -511,9 +591,9 @@ function ManageApplicationBySigner() {
             variant="default"
             className="text-right bg-green-700 w-full mx-1"
             type="submit"
-            onClick={(e) => handleEndorse(e)}
+            onClick={(e) => handleApprove(e)}
           >
-            Endorse
+            Approve
           </Button>
         </div>
 
@@ -552,9 +632,11 @@ function ManageApplicationBySigner() {
             </Button>
           </div>
         )} */}
+
+        <Toaster />
       </form>
     </Form>
   );
 }
 
-export default ManageApplicationBySigner;
+export default ManageApplicationByProgramCoordinator;

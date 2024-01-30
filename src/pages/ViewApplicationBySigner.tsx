@@ -12,6 +12,10 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useLoaderData, useNavigate, useParams } from "react-router-dom";
+import { Toaster } from "@/components/ui/toaster";
+import { useToast } from "@/components/ui/use-toast";
+import { axiosInstance } from "@/lib/axiosInstance";
+import { getStatusColor } from "@/lib/statusColor";
 
 const formSchema = z.object({
   name: z.string(),
@@ -35,6 +39,8 @@ function ViewApplicationBySigner() {
   let application: any;
   if (id) application = applications[id];
 
+  const { toast } = useToast();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -48,6 +54,34 @@ function ViewApplicationBySigner() {
       nationality: application.nationality,
     },
   });
+
+  const handleDownloadFile = async (e: any) => {
+    e.preventDefault();
+
+    try {
+      const response = await axiosInstance.post(
+        `/api/deferment-application/${application.id}/download`,
+        { file_type: "form" },
+        { responseType: "blob" }
+      );
+
+      console.log(response);
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "file.pdf");
+      document.body.appendChild(link);
+      link.click();
+    } catch (error) {
+      console.log(error);
+
+      toast({
+        variant: "destructive",
+        description: "Error handling request",
+      });
+    }
+  };
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
@@ -74,6 +108,16 @@ function ViewApplicationBySigner() {
           <span className="absolute mx-auto w-full text-center font-bold">
             Student Deferment Application View
           </span>
+        </div>
+        <div className="flex justify-center">
+          <div className="text-xl font-bold uppercase">STATUS: &nbsp;</div>
+          <div
+            className={`text-xl font-bold uppercase text-${getStatusColor(
+              application.status
+            )}-500`}
+          >
+            {application.status}
+          </div>
         </div>
         <div className="w-full flex space-x-4 justify-between">
           {/* name */}
@@ -331,6 +375,10 @@ function ViewApplicationBySigner() {
           )}
         />
 
+        <Button variant="secondary" onClick={handleDownloadFile}>
+          Download Deferment Application Form
+        </Button>
+
         <Button
           className="text-right w-full mx-1"
           onClick={(e) => {
@@ -340,6 +388,8 @@ function ViewApplicationBySigner() {
         >
           Go Back
         </Button>
+
+        <Toaster />
       </form>
     </Form>
   );
