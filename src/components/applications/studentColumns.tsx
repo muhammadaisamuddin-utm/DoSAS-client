@@ -13,7 +13,7 @@ function ActionComponent({ application, row }: Readonly<{ application: any; row:
   return (
     <div className="flex space-x-2 justify-center">
       {/* {application.applicationStatus.toString() === "REJECTED" ? ( */}
-      {application.status === "REJECTED" ? (
+      {application.status === "rejected" ? (
         <Button
           variant="secondary"
           size="sm"

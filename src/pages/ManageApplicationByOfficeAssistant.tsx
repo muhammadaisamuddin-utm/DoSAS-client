@@ -18,6 +18,13 @@ import { axiosInstance } from "@/lib/axiosInstance";
 import { Toaster } from "@/components/ui/toaster";
 import { useToast } from "@/components/ui/use-toast";
 import { getStatusColor } from "@/lib/statusColor";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const formSchema = z.object({
   name: z.string(),
@@ -35,20 +42,17 @@ const formSchema = z.object({
   proposal_defense: z.boolean().optional(),
   nht_completion_status: z.boolean().optional(),
   rejection_reason: z.string(),
+  comment: z.string(),
+  action: z.string(),
   // others: z.string(),
   pdf_file: z.any(),
 });
 
-// const reasons = [
-//   {
-//     value: "some information in deferment application form is not available",
-//     label: "Some information in deferment application form is not available",
-//   },
-//   { value: "missing medical report", label: "Missing medical report" },
-//   { value: "missing offical letter", label: "Missing official letter" },
-//   { value: "missing signatures", label: "Missing signatures" },
-//   { value: "others", label: "Others" },
-// ];
+const actions = [
+  { value: "reject", label: "REJECT" },
+  { value: "check", label: "CHECK" },
+  { value: "approve", label: "APPROVE" },
+];
 
 function ManageApplicationByOfficeAssistant() {
   let { id } = useParams();
@@ -56,7 +60,11 @@ function ManageApplicationByOfficeAssistant() {
   let application: any;
   if (id) application = applications[id];
 
+  const [fileUpload, setFileUpload] = useState<any>(null);
+
   const [rejectionReason, setRejectionReason] = useState("");
+  const [comment, setComment] = useState("");
+  const [action, setAction] = useState("");
 
   const { toast } = useToast();
 
@@ -79,15 +87,10 @@ function ManageApplicationByOfficeAssistant() {
       proposal_defense: undefined,
       nht_completion_status: undefined,
       rejection_reason: "",
+      comment: "",
       other: "",
     },
   });
-
-  // const [value, setValue] = useState("");
-
-  // function onSubmit(values: z.infer<typeof formSchema>) {
-  //   console.log(values);
-  // }
 
   const navigate = useNavigate();
 
@@ -182,6 +185,58 @@ function ManageApplicationByOfficeAssistant() {
         variant: "destructive",
         description: "Error handling request",
       });
+    }
+  };
+
+  const handleFileUpload = (e: any) => {
+    e.preventDefault();
+    setFileUpload(e.target.files[0]);
+  };
+
+  const handleApprove = async (e: any) => {
+    e.preventDefault();
+
+    try {
+      const formData = new FormData();
+      formData.append("comment", comment);
+      formData.append("action", "approve");
+      formData.append("approval_proof", fileUpload);
+
+      console.log(comment)
+      console.log(fileUpload)
+
+      await axiosInstance.post(
+        `/api/deferment-application/${application.id}/manage`,
+        formData
+      );
+
+      toast({
+        variant: "default",
+        description: "The deferment application has been approved",
+      });
+
+      setTimeout(() => {
+        navigate("/home");
+      }, 1000);
+    } catch (error) {
+      console.log(error);
+
+      toast({
+        variant: "destructive",
+        description: "Error handling request",
+      });
+    }
+  };
+
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+
+    if (action === "check") {
+      await handleCheck(e);
+    } else if (action === "reject") {
+      await handleReject(e);
+    } else if (action === "approve") {
+      await handleApprove(e);
     }
   };
 
@@ -493,9 +548,64 @@ function ManageApplicationByOfficeAssistant() {
           )}
         />
 
+        {/* comment */}
+        <FormField
+          control={form.control}
+          name="comment"
+          render={(field) => (
+            <FormItem>
+              <FormLabel>Comment</FormLabel>
+              <FormControl>
+                <Input
+                  className="font-bold"
+                  {...field}
+                  onChange={(e) => {
+                    e.preventDefault();
+                    setComment(e.target.value);
+                  }}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         <Button variant="secondary" onClick={handleDownloadFile}>
           Download Deferment Application Form
         </Button>
+
+        {/* action */}
+        <FormField
+          control={form.control}
+          name="action"
+          render={() => (
+            <FormItem>
+              <FormLabel>Action</FormLabel>
+              <Select
+                onValueChange={(e) => {
+                  // console.log(e);
+                  setAction(e);
+                }}
+              >
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select an action" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {actions.map((action) => {
+                    return (
+                      <SelectItem key={action.value} value={action.value}>
+                        {action.label}
+                      </SelectItem>
+                    );
+                  })}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
         {/* rejection reason */}
         {/* <FormField
@@ -552,7 +662,7 @@ function ManageApplicationByOfficeAssistant() {
           />
         )} */}
 
-        <div className="flex w-full justify-around">
+        {/* <div className="flex w-full justify-around">
           <Button
             variant="destructive"
             className="text-right bg-red-500 w-full mx-1"
@@ -569,7 +679,7 @@ function ManageApplicationByOfficeAssistant() {
           >
             Check
           </Button>
-        </div>
+        </div> */}
 
         {/* {value === "" ? (
           <div className="flex w-full justify-around">
@@ -606,6 +716,19 @@ function ManageApplicationByOfficeAssistant() {
             </Button>
           </div>
         )} */}
+
+        <div className="my-4 py-2">
+          <FormLabel>Upload Form</FormLabel>
+          <Input id="pdf_file" type="file" onChange={handleFileUpload} />
+        </div>
+
+        <Button
+          className="text-right w-full mx-1"
+          // type="submit"
+          onClick={(e) => handleSubmit(e)}
+        >
+          Submit
+        </Button>
         <Toaster />
       </form>
     </Form>

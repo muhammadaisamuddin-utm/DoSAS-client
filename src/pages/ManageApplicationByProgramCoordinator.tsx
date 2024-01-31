@@ -107,9 +107,16 @@ function ManageApplicationByProgramCoordinator() {
         `/api/deferment-application/${application.id}/manage`,
         formData
       );
-    } catch (error) {
-      console.log(error);
 
+      toast({
+        variant: "default",
+        description: "The deferment application has been checked",
+      });
+
+      setTimeout(() => {
+        navigate("/home");
+      }, 1000);
+    } catch (error) {
       toast({
         variant: "destructive",
         description: "Error handling request",
@@ -145,13 +152,14 @@ function ManageApplicationByProgramCoordinator() {
     }
   };
 
-  const handleApprove = async (e: any) => {
+  const handleEndorse = async (e: any) => {
     e.preventDefault();
     try {
       const formData = new FormData();
       formData.append("comment", comment);
-      formData.append("action", "approve");
-      formData.append("approval_proof", fileUpload);
+      formData.append("action", "endorse");
+      formData.append("pdf_form", fileUpload);
+      console.log(comment);
 
       await axiosInstance.post(
         `/api/deferment-application/${application.id}/manage`,
@@ -473,7 +481,7 @@ function ManageApplicationByProgramCoordinator() {
         {/* rejection reason */}
         <FormField
           control={form.control}
-          name="rejection_reason"
+          name="comment"
           render={(field) => (
             <FormItem>
               <FormLabel>Rejection Reason</FormLabel>
@@ -519,7 +527,7 @@ function ManageApplicationByProgramCoordinator() {
         </Button>
 
         <div className="my-4 py-2">
-          <FormLabel>Upload Approval Proof</FormLabel>
+          <FormLabel>Upload Form</FormLabel>
           <Input id="pdf_file" type="file" onChange={handleFileUpload} />
         </div>
 
@@ -591,9 +599,9 @@ function ManageApplicationByProgramCoordinator() {
             variant="default"
             className="text-right bg-green-700 w-full mx-1"
             type="submit"
-            onClick={(e) => handleApprove(e)}
+            onClick={(e) => handleEndorse(e)}
           >
-            Approve
+            Endorse
           </Button>
         </div>
 
