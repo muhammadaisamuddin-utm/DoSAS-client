@@ -14,8 +14,7 @@ export async function applicationsLoader() {
 export async function systemInfoLoader() {
   try {
     const response = await axiosInstance.get("/api/system-properties");
-    const { deferment_applications }: any = response.data;
-    return deferment_applications;
+    return response.data;
   } catch (error) {
     console.error(error);
     return null;
