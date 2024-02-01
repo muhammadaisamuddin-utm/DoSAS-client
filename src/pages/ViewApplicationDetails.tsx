@@ -15,8 +15,9 @@ function ViewApplicationDetails() {
     <>
       {role === "STUDENT" && <ViewApplicationByStudent />}
       {role === "ACADEMIC_ASSISTANT" && <ViewApplicationByOfficeAssistant />}
-      {role === "SUPERVISOR" ||
-        (role === "PROGRAM_COORDINATOR" && <ViewApplicationBySigner />)}
+      {(role === "SUPERVISOR" || role === "PROGRAM_COORDINATOR") && (
+        <ViewApplicationBySigner />
+      )}
     </>
   );
 }

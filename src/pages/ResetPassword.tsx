@@ -21,13 +21,13 @@ const formSchema = z
     newPassword: z
       .string()
       .min(1)
-      .refine((data) => /^[a-zA-Z0-9]{8,16}$/.test(data), {
+      .regex(/^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9]{8,16}$/g, {
         message: "Password must be 8 - 16 alphanumeric combination",
       }),
     confirmPassword: z
       .string()
       .min(1)
-      .refine((data) => /^[a-zA-Z0-9]{8,16}$/.test(data), {
+      .regex(/^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9]{8,16}$/g, {
         message: "Password must be 8 - 16 alphanumeric combination",
       }),
   })

@@ -30,7 +30,7 @@ const formSchema = z.object({
   nationality: z.string(),
   proposal_defense: z.string(),
   nht_completion_status: z.string(),
-  deferment_history: z.string(),
+  deferment_reason: z.string(),
 });
 
 function ViewApplicationBySigner() {
@@ -262,7 +262,7 @@ function ViewApplicationBySigner() {
         {/* deferment_reason */}
         <FormField
           control={form.control}
-          name="proposal_defense"
+          name="deferment_reason"
           render={() => (
             <FormItem>
               <FormLabel>Deferment Reason</FormLabel>
@@ -270,7 +270,7 @@ function ViewApplicationBySigner() {
                 <Input
                   disabled
                   className="bg-gray-100 font-bold"
-                  value={application.deferment_reason}
+                  value={application.reason === 'other' ? application.others : application.reason}
                 />
               </FormControl>
               <FormMessage />
@@ -289,7 +289,7 @@ function ViewApplicationBySigner() {
                 <Input
                   disabled
                   className="bg-gray-100 font-bold"
-                  value={application.supervisor}
+                  value={application.main_supervisor}
                 />
               </FormControl>
               <FormMessage />
@@ -348,7 +348,7 @@ function ViewApplicationBySigner() {
                 <Input
                   disabled
                   className="bg-gray-100 font-bold"
-                  value={application.proposal_defense_status}
+                  value={application.proposal_defence_status}
                 />
               </FormControl>
               <FormMessage />
