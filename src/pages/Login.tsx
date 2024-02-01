@@ -39,13 +39,13 @@ function Login() {
   const { login } = useAuth();
   const { toast } = useToast();
 
-  // const getXsrfToken = async () => {
-  //   try {
-  //     await axiosInstance.get("/sanctum/csrf-cookie");
-  //   } catch (error) {
-  //     console.error("Error fetching XSRF token:", error);
-  //   }
-  // };
+  const getXsrfToken = async () => {
+    try {
+      await axiosInstance.get("/sanctum/csrf-cookie");
+    } catch (error) {
+      console.error("Error fetching XSRF token:", error);
+    }
+  };
 
   const handleForgotPassword = (e: any) => {
     e.preventDefault();
@@ -53,7 +53,7 @@ function Login() {
   };
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    // await getXsrfToken();
+    await getXsrfToken();
 
     try {
       const response = await axiosInstance.post(
