@@ -347,7 +347,7 @@ function SubmitApplicationForm() {
               <FormControl>
                 <Input
                   className="bg-gray-100"
-                  value={parsedUser.supervisor}
+                  value={parsedUser.main_supervisor}
                   disabled
                 />
               </FormControl>
