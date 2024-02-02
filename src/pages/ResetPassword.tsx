@@ -15,20 +15,24 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import { Toaster } from "@/components/ui/toaster";
 import { axiosInstance } from "@/lib/axiosInstance";
+import { useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
 
 const formSchema = z
   .object({
     newPassword: z
       .string()
       .min(1)
-      .regex(/^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9]{8,16}$/g, {
-        message: "Password must be 8 - 16 alphanumeric combination",
+      .regex(/^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z0-9]{8,16}$/g, {
+        message:
+          "Password must be 8 - 16 alphanumeric combination (include both alphabets and numbers)",
       }),
     confirmPassword: z
       .string()
       .min(1)
-      .regex(/^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9]{8,16}$/g, {
-        message: "Password must be 8 - 16 alphanumeric combination",
+      .regex(/^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z0-9]{8,16}$/g, {
+        message:
+          "Password must be 8 - 16 alphanumeric combination (include both alphabets and numbers)",
       }),
   })
   .refine((data) => data.newPassword === data.confirmPassword, {
@@ -56,6 +60,10 @@ function ResetPassword({ isFirstTime }: Readonly<ResetPasswordProp>) {
 
   const navigate = useNavigate();
 
+  const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
+  const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] =
+    useState<boolean>(false);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -63,6 +71,16 @@ function ResetPassword({ isFirstTime }: Readonly<ResetPasswordProp>) {
       confirmPassword: "",
     },
   });
+
+  const togglePasswordVisibility = (e: any) => {
+    e.preventDefault();
+    setIsPasswordVisible(!isPasswordVisible);
+  };
+
+  const toggleConfirmPasswordVisibility = (e: any) => {
+    e.preventDefault();
+    setIsConfirmPasswordVisible(!isConfirmPasswordVisible);
+  };
 
   const handleBack = (e: any) => {
     e.preventDefault();
@@ -136,7 +154,25 @@ function ResetPassword({ isFirstTime }: Readonly<ResetPasswordProp>) {
             <FormItem>
               <FormLabel>Enter new password</FormLabel>
               <FormControl>
-                <Input placeholder="" {...field} type="password" />
+                <div className="flex relative">
+                  <Input
+                    className="grow w-full"
+                    placeholder=""
+                    {...field}
+                    type={isPasswordVisible ? "text" : "password"}
+                  />
+                  {isPasswordVisible ? (
+                    <Eye
+                      className="z-50 absolute flex h-full right-5 opacity-30"
+                      onClick={(e) => togglePasswordVisibility(e)}
+                    />
+                  ) : (
+                    <EyeOff
+                      className="z-50 absolute flex h-full right-5 opacity-30"
+                      onClick={(e) => togglePasswordVisibility(e)}
+                    />
+                  )}
+                </div>
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -151,7 +187,25 @@ function ResetPassword({ isFirstTime }: Readonly<ResetPasswordProp>) {
             <FormItem>
               <FormLabel>Confirm new password</FormLabel>
               <FormControl>
-                <Input placeholder="" {...field} type="password" />
+                <div className="flex relative">
+                  <Input
+                    className="grow w-full"
+                    placeholder=""
+                    {...field}
+                    type={isConfirmPasswordVisible ? "text" : "password"}
+                  />
+                  {isConfirmPasswordVisible ? (
+                    <Eye
+                      className="z-50 absolute flex h-full right-5 opacity-30"
+                      onClick={(e) => toggleConfirmPasswordVisibility(e)}
+                    />
+                  ) : (
+                    <EyeOff
+                      className="z-50 absolute flex h-full right-5 opacity-30"
+                      onClick={(e) => toggleConfirmPasswordVisibility(e)}
+                    />
+                  )}
+                </div>
               </FormControl>
               <FormMessage />
             </FormItem>

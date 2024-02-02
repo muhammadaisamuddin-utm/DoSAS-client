@@ -18,6 +18,8 @@ import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import { Toaster } from "@/components/ui/toaster";
 import { axiosInstance } from "@/lib/axiosInstance";
+import { useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
 
 const formSchema = z.object({
   email: z
@@ -35,6 +37,8 @@ function Login() {
     },
   });
 
+  const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
+
   const navigate = useNavigate();
   const { login } = useAuth();
   const { toast } = useToast();
@@ -47,6 +51,11 @@ function Login() {
     }
   };
 
+  const togglePasswordVisibility = (e: any) => {
+    e.preventDefault();
+    setIsPasswordVisible(!isPasswordVisible);
+  };
+
   const handleForgotPassword = (e: any) => {
     e.preventDefault();
     navigate("/login/accountrecovery");
@@ -56,10 +65,7 @@ function Login() {
     await getXsrfToken();
 
     try {
-      const response = await axiosInstance.post(
-        "/api/login",
-        values
-      );
+      const response = await axiosInstance.post("/api/login", values);
 
       if (response.status === 200) {
         login?.(response.data);
@@ -116,12 +122,27 @@ function Login() {
               <FormItem>
                 <FormLabel>Password</FormLabel>
                 <FormControl>
-                  <Input
-                    placeholder="Enter your password"
-                    {...field}
-                    type="password"
-                  />
+                  <div className="flex relative">
+                    <Input
+                      className="grow w-full"
+                      placeholder="Enter your password"
+                      {...field}
+                      type={isPasswordVisible ? "text" : "password"}
+                    />
+                    {isPasswordVisible ? (
+                      <Eye
+                        className="z-50 absolute flex h-full right-5 opacity-30 cursor-pointer"
+                        onClick={(e) => togglePasswordVisibility(e)}
+                      />
+                    ) : (
+                      <EyeOff
+                        className="z-50 absolute flex h-full right-5 opacity-20 cursor-pointer"
+                        onClick={(e) => togglePasswordVisibility(e)}
+                      />
+                    )}
+                  </div>
                 </FormControl>
+
                 <FormMessage />
               </FormItem>
             )}
