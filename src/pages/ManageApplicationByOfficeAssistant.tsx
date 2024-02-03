@@ -25,6 +25,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { getFormattedDate } from "@/lib/date";
 
 const formSchema = z.object({
   name: z.string(),
@@ -140,7 +141,12 @@ function ManageApplicationByOfficeAssistant() {
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement("a");
       link.href = url;
-      link.setAttribute("download", "file.pdf");
+      link.setAttribute(
+        "download",
+        `${application.semester_code}_${
+          application.userid
+        }_${getFormattedDate()}.pdf`
+      );
       document.body.appendChild(link);
       link.click();
     } catch (error) {
@@ -202,8 +208,6 @@ function ManageApplicationByOfficeAssistant() {
       formData.append("action", "approve");
       formData.append("approval_proof", fileUpload);
 
-      console.log(comment)
-      console.log(fileUpload)
 
       await axiosInstance.post(
         `/api/deferment-application/${application.id}/manage`,

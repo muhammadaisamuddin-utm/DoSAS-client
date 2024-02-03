@@ -16,6 +16,7 @@ import { axiosInstance } from "@/lib/axiosInstance";
 import { useToast } from "@/components/ui/use-toast";
 import { Toaster } from "@/components/ui/toaster";
 import { useState } from "react";
+import { getFormattedDate } from "@/lib/date";
 
 const formSchema = z.object({
   name: z.string(),
@@ -75,7 +76,10 @@ function UpdateApplicationByStudent() {
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement("a");
       link.href = url;
-      link.setAttribute("download", "file.pdf");
+      link.setAttribute(
+        "download",
+        `${application.semester_code}_${application.userid}_${getFormattedDate()}.pdf`
+      );
       document.body.appendChild(link);
       link.click();
     } catch (error) {

@@ -16,6 +16,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { useToast } from "@/components/ui/use-toast";
 import { axiosInstance } from "@/lib/axiosInstance";
 import { getStatusColor } from "@/lib/statusColor";
+import { getFormattedDate } from "@/lib/date";
 
 const formSchema = z.object({
   name: z.string(),
@@ -71,7 +72,10 @@ function ViewApplicationBySigner() {
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement("a");
       link.href = url;
-      link.setAttribute("download", "file.pdf");
+      link.setAttribute(
+        "download",
+        `${application.semester_code}_${application.userid}_${getFormattedDate()}.pdf`
+      );
       document.body.appendChild(link);
       link.click();
     } catch (error) {
@@ -272,7 +276,11 @@ function ViewApplicationBySigner() {
                 <Input
                   disabled
                   className="bg-gray-100 font-bold"
-                  value={application.reason === 'other' ? application.others : application.reason}
+                  value={
+                    application.reason === "other"
+                      ? application.others
+                      : application.reason
+                  }
                 />
               </FormControl>
               <FormMessage />
