@@ -86,7 +86,7 @@ function SubmitApplicationForm() {
       nationality: parsedUser.nationality,
       deferment_reason: "",
       other: "",
-      main_supervisor: parsedUser.supervisor,
+      main_supervisor: parsedUser.main_supervisor,
       co_supervisor: parsedUser.co_supervisor,
       proposal_defense: parsedUser.proposal_defence_status,
       nht_completion_status: parsedUser.nht_completion_status,
