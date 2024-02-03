@@ -67,21 +67,17 @@ function Login() {
     try {
       const response = await axiosInstance.post("/api/login", values);
 
-      if (response.status === 200) {
-        login?.(response.data);
-        navigate("/home");
-        return;
-      } else {
-        toast({
-          variant: "destructive",
-          description: "Invalid credentials",
-        });
+      if (response.status !== 200) {
+        throw new Error("teest");
       }
-    } catch (e) {
-      console.error(e);
+
+      login?.(response.data);
+      navigate("/home");
+      return;
+    } catch (error: any) {
       toast({
         variant: "destructive",
-        description: "Error logging in",
+        description: error.response.data.message,
       });
     }
   };

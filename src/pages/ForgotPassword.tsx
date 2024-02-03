@@ -40,10 +40,7 @@ function ForgotPassword() {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      const response = await axiosInstance.post(
-        "/api/forgot-password",
-        values
-      );
+      const response = await axiosInstance.post("/api/forgot-password", values);
       console.log(response);
 
       toast({
@@ -54,12 +51,10 @@ function ForgotPassword() {
       setTimeout(() => {
         navigate("/home");
       }, 1000);
-    } catch (error) {
-      console.error(error);
-
+    } catch (error: any) {
       toast({
         variant: "destructive",
-        description: "Error handling request",
+        description: error.response.data.message,
       });
     }
   };
