@@ -21,7 +21,7 @@ function ActionComponent({ row }: Readonly<{ row: any }>) {
       >
         View details
       </Button>
-      {status === "pending" || status === "pending_approval" ? (
+      {status === "endorsed1" ? (
         <Button
           variant="secondary"
           size="sm"

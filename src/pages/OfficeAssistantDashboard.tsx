@@ -1,6 +1,6 @@
 import Countdown from "@/components/Countdown";
 import Header from "@/components/Header";
-import { columns } from "@/components/applications/columns";
+import { columns } from "@/components/applications/officeAssistantColumns";
 import { DataTable } from "@/components/applications/datatable";
 import { User } from "@/types/User";
 
