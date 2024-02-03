@@ -19,6 +19,13 @@ import { Toaster } from "@/components/ui/toaster";
 import { useToast } from "@/components/ui/use-toast";
 import { getStatusColor } from "@/lib/statusColor";
 import { getFormattedDate } from "@/lib/date";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const formSchema = z.object({
   name: z.string(),
@@ -39,6 +46,7 @@ const formSchema = z.object({
   comment: z.string().optional(),
   // others: z.string(),
   pdf_file: z.any(),
+  action: z.string(),
 });
 
 // const reasons = [
@@ -52,11 +60,18 @@ const formSchema = z.object({
 //   { value: "others", label: "Others" },
 // ];
 
-function ManageApplicationByProgramCoordinator() {
+const actions = [
+  { value: "reject", label: "REJECT" },
+  { value: "endorse", label: "ENDORSE" },
+];
+
+function ManageApplicationBySigner() {
   let { id } = useParams();
   const applications: any = useLoaderData();
   let application: any;
   if (id) application = applications[id];
+
+  const [action, setAction] = useState("");
 
   const { toast } = useToast();
 
@@ -142,7 +157,9 @@ function ManageApplicationByProgramCoordinator() {
       link.href = url;
       link.setAttribute(
         "download",
-        `${application.semester_code}_${application.userid}_${getFormattedDate()}.pdf`
+        `${application.semester_code}_${
+          application.userid
+        }_${getFormattedDate()}.pdf`
       );
       document.body.appendChild(link);
       link.click();
@@ -189,6 +206,16 @@ function ManageApplicationByProgramCoordinator() {
   const handleFileUpload = (e: any) => {
     e.preventDefault();
     setFileUpload(e.target.files[0]);
+  };
+
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+
+    if (action === "endorse") {
+      await handleEndorse(e);
+    } else if (action === "reject") {
+      await handleReject(e);
+    }
   };
 
   return (
@@ -371,7 +398,7 @@ function ManageApplicationByProgramCoordinator() {
               <FormLabel>Deferment Reason</FormLabel>
               <FormControl>
                 <Input
-                  className="bg-gray-100 font-bold"
+                  className="bg-gray-100 font-bold capitalize"
                   value={
                     application.reason === "other"
                       ? application.others
@@ -482,87 +509,32 @@ function ManageApplicationByProgramCoordinator() {
           )}
         />
 
-        {/* rejection reason */}
-        <FormField
-          control={form.control}
-          name="comment"
-          render={(field) => (
-            <FormItem>
-              <FormLabel>Rejection Reason</FormLabel>
-              <FormControl>
-                <Input
-                  className="font-bold"
-                  {...field}
-                  onChange={(e) => {
-                    e.preventDefault();
-                    setRejectionReason(e.target.value);
-                  }}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        {/* comment */}
-        <FormField
-          control={form.control}
-          name="comment"
-          render={(field) => (
-            <FormItem>
-              <FormLabel>Comment</FormLabel>
-              <FormControl>
-                <Input
-                  className="font-bold"
-                  {...field}
-                  onChange={(e) => {
-                    e.preventDefault();
-                    setComment(e.target.value);
-                  }}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
         <Button variant="secondary" onClick={handleDownloadFile}>
           Download Deferment Application Form
         </Button>
 
-        <div className="my-4 py-2">
-          <FormLabel>Upload Form</FormLabel>
-          <Input id="pdf_file" type="file" onChange={handleFileUpload} />
-        </div>
-
-        {/* rejection reason */}
-        {/* <FormField
+        {/* action */}
+        <FormField
           control={form.control}
-          name="comment"
-          render={({ field }) => (
+          name="action"
+          render={() => (
             <FormItem>
-              <FormLabel>Rejection Reason</FormLabel>
+              <FormLabel>Action</FormLabel>
               <Select
                 onValueChange={(e) => {
-                  field.onChange(e);
-                  if (e === "others") {
-                    setIsOther(true);
-                  } else {
-                    setIsOther(false);
-                  }
+                  setAction(e);
                 }}
-                // defaultValue={field.value}
               >
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select a deferment reason" />
+                    <SelectValue placeholder="Select an action" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {reasons.map((reason) => {
+                  {actions.map((action) => {
                     return (
-                      <SelectItem key={reason.value} value={reason.value}>
-                        {reason.label}
+                      <SelectItem key={action.value} value={action.value}>
+                        {action.label}
                       </SelectItem>
                     );
                   })}
@@ -573,82 +545,70 @@ function ManageApplicationByProgramCoordinator() {
           )}
         />
 
-        {isOther && (
-          // others
+        {action === "reject" && (
           <FormField
             control={form.control}
-            name="other"
-            render={({ field }) => (
+            name="comment"
+            render={(field) => (
               <FormItem>
-                <FormLabel>Other Reason</FormLabel>
+                <FormLabel>Rejection Reason</FormLabel>
                 <FormControl>
-                  <Input className="" {...field} />
+                  <Input
+                    className="font-bold"
+                    {...field}
+                    onChange={(e) => {
+                      e.preventDefault();
+                      setRejectionReason(e.target.value);
+                    }}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-        )} */}
+        )}
 
-        <div className="flex w-full justify-around">
-          <Button
-            variant="destructive"
-            className="text-right bg-red-500 w-full mx-1"
-            type="submit"
-            onClick={(e) => handleReject(e)}
-          >
-            Reject
-          </Button>
-          <Button
-            variant="default"
-            className="text-right bg-green-700 w-full mx-1"
-            type="submit"
-            onClick={(e) => handleEndorse(e)}
-          >
-            Endorse
-          </Button>
-        </div>
+        {action === "endorse" && (
+          <div>
+            <FormField
+              control={form.control}
+              name="comment"
+              render={(field) => (
+                <FormItem>
+                  <FormLabel>Comment</FormLabel>
+                  <FormControl>
+                    <Input
+                      className="font-bold"
+                      {...field}
+                      onChange={(e) => {
+                        e.preventDefault();
+                        setComment(e.target.value);
+                      }}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-        {/* {value === "" ? (
-          <div className="flex w-full justify-around">
-            <Button
-              disabled
-              variant="destructive"
-              className="text-right bg-gray-500 w-full mx-1"
-            >
-              Reject
-            </Button>
-            <Button
-              variant="default"
-              className="text-right bg-green-700 w-full mx-1"
-              type="submit"
-            >
-              Check
-            </Button>
+            <div className="my-4 py-2">
+              <FormLabel>Upload Form</FormLabel>
+              <Input id="pdf_file" type="file" onChange={handleFileUpload} />
+            </div>
           </div>
-        ) : (
-          <div className="flex w-full justify-around">
-            <Button
-              variant="destructive"
-              className="text-right bg-red-500 w-full mx-1"
-              type="submit"
-            >
-              Reject
-            </Button>
-            <Button
-              disabled
-              variant="default"
-              className="text-right bg-gray-700 w-full mx-1"
-            >
-              Check
-            </Button>
-          </div>
-        )} */}
+        )}
 
+        <Button
+          className="text-right w-full mx-1"
+          onClick={(e) => handleSubmit(e)}
+          disabled={action === ""}
+        >
+          Submit
+        </Button>
         <Toaster />
       </form>
     </Form>
   );
 }
 
-export default ManageApplicationByProgramCoordinator;
+export default ManageApplicationBySigner;

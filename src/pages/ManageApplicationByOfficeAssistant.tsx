@@ -208,7 +208,6 @@ function ManageApplicationByOfficeAssistant() {
       formData.append("action", "approve");
       formData.append("approval_proof", fileUpload);
 
-
       await axiosInstance.post(
         `/api/deferment-application/${application.id}/manage`,
         formData
@@ -419,7 +418,7 @@ function ManageApplicationByOfficeAssistant() {
               <FormLabel>Deferment Reason</FormLabel>
               <FormControl>
                 <Input
-                  className="bg-gray-100 font-bold"
+                  className="bg-gray-100 font-bold capitalize"
                   value={
                     application.reason === "other"
                       ? application.others
@@ -530,50 +529,6 @@ function ManageApplicationByOfficeAssistant() {
           )}
         />
 
-        {/* rejection reason */}
-        <FormField
-          control={form.control}
-          name="rejection_reason"
-          render={(field) => (
-            <FormItem>
-              <FormLabel>Rejection Reason</FormLabel>
-              <FormControl>
-                <Input
-                  className="font-bold"
-                  {...field}
-                  onChange={(e) => {
-                    e.preventDefault();
-                    setRejectionReason(e.target.value);
-                  }}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        {/* comment */}
-        <FormField
-          control={form.control}
-          name="comment"
-          render={(field) => (
-            <FormItem>
-              <FormLabel>Comment</FormLabel>
-              <FormControl>
-                <Input
-                  className="font-bold"
-                  {...field}
-                  onChange={(e) => {
-                    e.preventDefault();
-                    setComment(e.target.value);
-                  }}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
         <Button variant="secondary" onClick={handleDownloadFile}>
           Download Deferment Application Form
         </Button>
@@ -587,7 +542,6 @@ function ManageApplicationByOfficeAssistant() {
               <FormLabel>Action</FormLabel>
               <Select
                 onValueChange={(e) => {
-                  // console.log(e);
                   setAction(e);
                 }}
               >
@@ -611,125 +565,63 @@ function ManageApplicationByOfficeAssistant() {
           )}
         />
 
-        {/* rejection reason */}
-        {/* <FormField
-          control={form.control}
-          name="rejection_reason"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Rejection Reason</FormLabel>
-              <Select
-                onValueChange={(e) => {
-                  field.onChange(e);
-                  if (e === "others") {
-                    setIsOther(true);
-                  } else {
-                    setIsOther(false);
-                  }
-                }}
-                // defaultValue={field.value}
-              >
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a deferment reason" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {reasons.map((reason) => {
-                    return (
-                      <SelectItem key={reason.value} value={reason.value}>
-                        {reason.label}
-                      </SelectItem>
-                    );
-                  })}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        {isOther && (
-          // others
+        {action === "reject" && (
           <FormField
             control={form.control}
-            name="other"
-            render={({ field }) => (
+            name="rejection_reason"
+            render={(field) => (
               <FormItem>
-                <FormLabel>Other Reason</FormLabel>
+                <FormLabel>Rejection Reason</FormLabel>
                 <FormControl>
-                  <Input className="" {...field} />
+                  <Input
+                    className="font-bold"
+                    {...field}
+                    onChange={(e) => {
+                      e.preventDefault();
+                      setRejectionReason(e.target.value);
+                    }}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-        )} */}
+        )}
 
-        {/* <div className="flex w-full justify-around">
-          <Button
-            variant="destructive"
-            className="text-right bg-red-500 w-full mx-1"
-            type="submit"
-            onClick={(e) => handleReject(e)}
-          >
-            Reject
-          </Button>
-          <Button
-            variant="default"
-            className="text-right bg-green-700 w-full mx-1"
-            type="submit"
-            onClick={(e) => handleCheck(e)}
-          >
-            Check
-          </Button>
-        </div> */}
+        {action === "approve" && (
+          <div>
+            <FormField
+              control={form.control}
+              name="comment"
+              render={(field) => (
+                <FormItem>
+                  <FormLabel>Comment</FormLabel>
+                  <FormControl>
+                    <Input
+                      className="font-bold"
+                      {...field}
+                      onChange={(e) => {
+                        e.preventDefault();
+                        setComment(e.target.value);
+                      }}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-        {/* {value === "" ? (
-          <div className="flex w-full justify-around">
-            <Button
-              disabled
-              variant="destructive"
-              className="text-right bg-gray-500 w-full mx-1"
-            >
-              Reject
-            </Button>
-            <Button
-              variant="default"
-              className="text-right bg-green-700 w-full mx-1"
-              type="submit"
-            >
-              Check
-            </Button>
+            <div className="my-4 py-2">
+              <FormLabel>Upload Approval Proof</FormLabel>
+              <Input id="pdf_file" type="file" onChange={handleFileUpload} />
+            </div>
           </div>
-        ) : (
-          <div className="flex w-full justify-around">
-            <Button
-              variant="destructive"
-              className="text-right bg-red-500 w-full mx-1"
-              type="submit"
-            >
-              Reject
-            </Button>
-            <Button
-              disabled
-              variant="default"
-              className="text-right bg-gray-700 w-full mx-1"
-            >
-              Check
-            </Button>
-          </div>
-        )} */}
-
-        <div className="my-4 py-2">
-          <FormLabel>Upload Form</FormLabel>
-          <Input id="pdf_file" type="file" onChange={handleFileUpload} />
-        </div>
+        )}
 
         <Button
           className="text-right w-full mx-1"
-          // type="submit"
           onClick={(e) => handleSubmit(e)}
+          disabled={action === ""}
         >
           Submit
         </Button>

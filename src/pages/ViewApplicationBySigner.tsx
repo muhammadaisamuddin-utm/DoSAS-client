@@ -275,7 +275,7 @@ function ViewApplicationBySigner() {
               <FormControl>
                 <Input
                   disabled
-                  className="bg-gray-100 font-bold"
+                  className="bg-gray-100 font-bold capitalize"
                   value={
                     application.reason === "other"
                       ? application.others
