@@ -110,7 +110,7 @@ function ManageApplicationBySupervisor() {
 
       toast({
         variant: "default",
-        description: "The deferment application has been checked",
+        description: "The deferment application has been endorsed",
       });
 
       setTimeout(() => {
@@ -370,8 +370,8 @@ function ManageApplicationBySupervisor() {
                   className="bg-gray-100 font-bold"
                   value={
                     application.reason === "other"
-                      ? application.reason
-                      : application.others
+                      ? application.others
+                      : application.reason
                   }
                   disabled
                 />
@@ -391,7 +391,7 @@ function ManageApplicationBySupervisor() {
               <FormControl>
                 <Input
                   className="bg-gray-100 font-bold"
-                  value={application.supervisor}
+                  value={application.main_supervisor}
                   disabled
                 />
               </FormControl>

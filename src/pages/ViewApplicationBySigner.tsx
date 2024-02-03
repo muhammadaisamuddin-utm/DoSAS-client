@@ -52,6 +52,7 @@ function ViewApplicationBySigner() {
       faculty: application.faculty_name,
       current_semester: application.current_semester,
       nationality: application.nationality,
+      main_supervisor: application.main_supervisor,
     },
   });
 
@@ -86,6 +87,8 @@ function ViewApplicationBySigner() {
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
   }
+
+  console.log(application);
 
   const navigate = useNavigate();
 
@@ -250,7 +253,6 @@ function ViewApplicationBySigner() {
                     disabled
                     className="bg-gray-100 font-bold"
                     value={application.semester_name}
-                    // value={application.semester_status}
                   />
                   <FormMessage />
                 </FormItem>

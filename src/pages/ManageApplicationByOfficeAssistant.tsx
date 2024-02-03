@@ -418,8 +418,8 @@ function ManageApplicationByOfficeAssistant() {
                   className="bg-gray-100 font-bold"
                   value={
                     application.reason === "other"
-                      ? application.reason
-                      : application.others
+                      ? application.others
+                      : application.reason
                   }
                   disabled
                 />

@@ -111,7 +111,11 @@ function ViewApplicationByOfficeAssistant() {
         </div>
         <div className="flex justify-center">
           <div className="text-xl font-bold uppercase">STATUS: &nbsp;</div>
-          <div className={`text-xl font-bold uppercase text-${getStatusColor(application.status)}-500`}>
+          <div
+            className={`text-xl font-bold uppercase text-${getStatusColor(
+              application.status
+            )}-500`}
+          >
             {application.status}
           </div>
         </div>
@@ -266,7 +270,11 @@ function ViewApplicationByOfficeAssistant() {
                 <Input
                   disabled
                   className="bg-gray-100 font-bold"
-                  value={application.reason}
+                  value={
+                    application.reason === "other"
+                      ? application.others
+                      : application.reason
+                  }
                 />
               </FormControl>
               <FormMessage />

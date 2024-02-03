@@ -59,7 +59,7 @@ const reasons = [
   { value: "financial problems", label: "Financial Problems" },
   { value: "personal problems", label: "Personal Problems" },
   { value: "work commitment", label: "Work Commitment" },
-  { value: "others", label: "Others" },
+  { value: "other", label: "Other" },
 ];
 
 function SubmitApplicationForm() {
@@ -293,7 +293,7 @@ function SubmitApplicationForm() {
               <Select
                 onValueChange={(e) => {
                   field.onChange(e);
-                  if (e === "others") {
+                  if (e === "other") {
                     setIsOther(true);
                   } else {
                     setIsOther(false);
@@ -321,7 +321,7 @@ function SubmitApplicationForm() {
         />
 
         {isOther && (
-          // others
+          // other
           <FormField
             control={form.control}
             name="other"

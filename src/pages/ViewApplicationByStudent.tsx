@@ -258,7 +258,11 @@ function ViewApplicationByStudent() {
                 <Input
                   disabled
                   className="bg-gray-100 font-bold"
-                  value={application.reason}
+                  value={
+                    application.reason === "other"
+                      ? application.others
+                      : application.reason
+                  }
                 />
               </FormControl>
               <FormMessage />
