@@ -26,6 +26,7 @@ import intl_deferment_pdf from "../assets/UTMAMD02-Deferment-of-Study-Internatio
 import { axiosInstance } from "@/lib/axiosInstance";
 import { useToast } from "@/components/ui/use-toast";
 import { Toaster } from "@/components/ui/toaster";
+import { Loading } from "@/components/loading";
 
 const formSchema = z.object({
   name: z.string(),
@@ -68,6 +69,7 @@ function SubmitApplicationForm() {
 
   const [isOther, setIsOther] = useState<boolean>(false);
   const [fileUpload, setFileUpload] = useState<any>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const { user } = useAuth();
   let parsedUser: any;
@@ -105,6 +107,7 @@ function SubmitApplicationForm() {
   };
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    setLoading(true);
     try {
       console.log(values);
 
@@ -132,6 +135,8 @@ function SubmitApplicationForm() {
         variant: "destructive",
         description: "Error handling request",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -469,6 +474,7 @@ function SubmitApplicationForm() {
           </Button>
         </div>
         <Toaster />
+        {loading && <Loading />}
       </form>
     </Form>
   );

@@ -26,6 +26,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { getFormattedDate } from "@/lib/date";
+import { Loading } from "@/components/loading";
 
 const formSchema = z.object({
   name: z.string(),
@@ -62,6 +63,7 @@ function ManageApplicationByOfficeAssistant() {
   if (id) application = applications[id];
 
   const [fileUpload, setFileUpload] = useState<any>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const [rejectionReason, setRejectionReason] = useState("");
   const [comment, setComment] = useState("");
@@ -233,6 +235,7 @@ function ManageApplicationByOfficeAssistant() {
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
+    setLoading(true);
 
     if (action === "check") {
       await handleCheck(e);
@@ -241,6 +244,7 @@ function ManageApplicationByOfficeAssistant() {
     } else if (action === "approve") {
       await handleApprove(e);
     }
+    setLoading(false);
   };
 
   return (
@@ -626,6 +630,7 @@ function ManageApplicationByOfficeAssistant() {
           Submit
         </Button>
         <Toaster />
+        {loading && <Loading />}
       </form>
     </Form>
   );

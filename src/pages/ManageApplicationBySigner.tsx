@@ -26,6 +26,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Loading } from "@/components/loading";
 
 const formSchema = z.object({
   name: z.string(),
@@ -72,6 +73,8 @@ function ManageApplicationBySigner() {
   if (id) application = applications[id];
 
   const [action, setAction] = useState("");
+
+  const [loading, setLoading] = useState<boolean>(false);
 
   const { toast } = useToast();
 
@@ -211,11 +214,15 @@ function ManageApplicationBySigner() {
   const handleSubmit = async (e: any) => {
     e.preventDefault();
 
+    setLoading(true);
+
     if (action === "endorse") {
       await handleEndorse(e);
     } else if (action === "reject") {
       await handleReject(e);
     }
+
+    setLoading(false);
   };
 
   return (
@@ -606,6 +613,7 @@ function ManageApplicationBySigner() {
           Submit
         </Button>
         <Toaster />
+        {loading && <Loading />}
       </form>
     </Form>
   );

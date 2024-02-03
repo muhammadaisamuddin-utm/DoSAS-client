@@ -17,6 +17,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { Toaster } from "@/components/ui/toaster";
 import { useState } from "react";
 import { getFormattedDate } from "@/lib/date";
+import { Loading } from "@/components/loading";
 
 const formSchema = z.object({
   name: z.string(),
@@ -44,6 +45,7 @@ function UpdateApplicationByStudent() {
   const { toast } = useToast();
 
   const [fileUpload, setFileUpload] = useState<any>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const navigate = useNavigate();
 
@@ -78,7 +80,9 @@ function UpdateApplicationByStudent() {
       link.href = url;
       link.setAttribute(
         "download",
-        `${application.semester_code}_${application.userid}_${getFormattedDate()}.pdf`
+        `${application.semester_code}_${
+          application.userid
+        }_${getFormattedDate()}.pdf`
       );
       document.body.appendChild(link);
       link.click();
@@ -94,6 +98,7 @@ function UpdateApplicationByStudent() {
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
+    setLoading(true);
 
     try {
       const formData = new FormData();
@@ -119,6 +124,8 @@ function UpdateApplicationByStudent() {
         variant: "destructive",
         description: "Error handling request",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -443,6 +450,7 @@ function UpdateApplicationByStudent() {
           Submit
         </Button>
         <Toaster />
+        {loading && <Loading />}
       </form>
     </Form>
   );
