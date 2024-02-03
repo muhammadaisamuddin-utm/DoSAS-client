@@ -88,7 +88,9 @@ function UpdateApplicationByStudent() {
     }
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+
     try {
       const formData = new FormData();
       formData.append("pdf_form", fileUpload);
@@ -121,14 +123,14 @@ function UpdateApplicationByStudent() {
     setFileUpload(e.target.files[0]);
   };
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-  }
+  // function onSubmit(values: z.infer<typeof formSchema>) {
+  //   console.log(values);
+  // }
 
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit(onSubmit)}
+        // onSubmit={form.handleSubmit(onSubmit)}
         className="space-y-2 flex flex-col flex-wrap w-full max-w-lg justify-center mx-auto mt-2 mb-4"
       >
         <div className="flex relative items-center">
@@ -142,7 +144,7 @@ function UpdateApplicationByStudent() {
             Back
           </Button>
           <span className="absolute mx-auto w-full text-center font-bold">
-            Student Deferment Application View
+            Update Student Deferment Application
           </span>
         </div>
         <div className="w-full flex space-x-4 justify-between">
@@ -430,8 +432,8 @@ function UpdateApplicationByStudent() {
 
         <Button
           className="text-right w-full mx-1"
-          onClick={() => {
-            handleSubmit();
+          onClick={(e) => {
+            handleSubmit(e);
           }}
         >
           Submit
