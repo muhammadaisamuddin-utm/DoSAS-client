@@ -247,6 +247,12 @@ function ManageApplicationByOfficeAssistant() {
     setLoading(false);
   };
 
+  const isActionAllowed = (action: string, status: string) => {
+    if (action === "approve" && status === "pending") return false;
+    if (action === "checked" && status === "pending_approval") return false;
+    return true;
+  };
+
   return (
     <Form {...form}>
       <form
@@ -557,7 +563,14 @@ function ManageApplicationByOfficeAssistant() {
                 <SelectContent>
                   {actions.map((action) => {
                     return (
-                      <SelectItem key={action.value} value={action.value}>
+                      <SelectItem
+                        key={action.value}
+                        value={action.value}
+                        disabled={!isActionAllowed(
+                          action.value,
+                          application.status
+                        )}
+                      >
                         {action.label}
                       </SelectItem>
                     );
