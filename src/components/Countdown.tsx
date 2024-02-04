@@ -1,3 +1,4 @@
+import { axiosInstance } from "@/lib/axiosInstance";
 import { useEffect, useState } from "react";
 
 interface TimeLeft {
@@ -8,8 +9,14 @@ interface TimeLeft {
 }
 
 function Countdown() {
-  // maybe later put it in an env var
-  const targetDate: number = new Date("2024-02-02").getTime();
+  const [targetDate, setTargetDate] = useState<number>(0);
+
+  const [timeLeft, setTimeLeft] = useState<TimeLeft>({
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
+  });
 
   const getFormattedDate = (targetDate: number) => {
     const date = new Date(targetDate);
@@ -21,12 +28,15 @@ function Countdown() {
     return formattedDate;
   };
 
-  const calculateTimeLeft = (): TimeLeft => {
+  const calculateTimeLeft = () => {
     const now = new Date().getTime();
+    console.log("now");
+    console.log(now);
     const diff = targetDate - now;
 
     if (diff <= 0) {
-      return { days: 0, hours: 0, minutes: 0, seconds: 0 };
+      setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+      return;
     }
 
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
@@ -34,18 +44,35 @@ function Countdown() {
     const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
     const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
-    return { days, hours, minutes, seconds };
+    setTimeLeft({ days, hours, minutes, seconds });
   };
 
-  const [timeLeft, setTimeLeft] = useState<TimeLeft>(calculateTimeLeft);
+  const getTargetDate = async () => {
+    try {
+      const response = await axiosInstance.get("/api/system-properties");
+      const dateStr = new Date(response.data.data[1].value).getTime();
+      setTargetDate(dateStr);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeLeft(calculateTimeLeft());
-    }, 1_000);
+    getTargetDate();
+  }, []);
 
-    return () => clearInterval(timer);
-  });
+  useEffect(() => {
+    if (targetDate) {
+      console.log("targetDate");
+      console.log(targetDate);
+      console.log(timeLeft);
+      const timer = setInterval(() => {
+        calculateTimeLeft();
+      }, 1_000);
+
+      return () => clearInterval(timer);
+    }
+  }, [targetDate]);
 
   return (
     <div className="flex flex-wrap w-full my-4 justify-end">

@@ -17,6 +17,13 @@ function StudentDashboard({
 }: Readonly<StudentDashboardProps>) {
   const navigate = useNavigate();
 
+  const isApplicationAllowed = (): boolean => {
+    if (!user) return false;
+    if (user.max_semester - user.current_semester - 1 <= 0) return false;
+    if (user.deferment_streak > 2) return false;
+    return true;
+  };
+
   return (
     <>
       <Header username={user?.name} role={user?.role} />
@@ -27,6 +34,7 @@ function StudentDashboard({
       <Button
         className="ml-20 border-gray-300 border"
         variant="secondary"
+        disabled={!isApplicationAllowed}
         onClick={() => navigate("/application/submit")}
       >
         Create a new deferment application
