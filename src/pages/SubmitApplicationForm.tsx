@@ -50,18 +50,20 @@ const reasons = [
   // this one is not counted
   {
     value: "country/university reasons",
-    label: "Interest of country or university",
+    label: "Interest of Country or University",
   },
   { value: "natural disaster", label: "Natural Disaster" },
   { value: "war", label: "War" },
-  { value: "health problems", label: "Health Problems" },
+  { value: "health reasons", label: "Health Reasons" },
 
   // this one is counted
-  { value: "financial problems", label: "Financial Problems" },
-  { value: "personal problems", label: "Personal Problems" },
+  { value: "financial reasons", label: "Financial Reasons" },
+  { value: "personal reasons", label: "Personal Reasons" },
   { value: "work commitment", label: "Work Commitment" },
   { value: "other", label: "Other" },
 ];
+
+const specialReasons = ['country/university reasons', 'natural disaster', 'war', 'health reasons'];
 
 function SubmitApplicationForm() {
   const navigate = useNavigate();
@@ -72,6 +74,7 @@ function SubmitApplicationForm() {
   const [loading, setLoading] = useState<boolean>(false);
 
   const { user } = useAuth();
+  
   let parsedUser: any;
   if (user != null || user != undefined) parsedUser = JSON.parse(user);
 
@@ -95,6 +98,9 @@ function SubmitApplicationForm() {
     },
   });
 
+  const { watch } = form;
+  const selectedValue = watch("deferment_reason");
+
   const handleFileUpload = (e: any) => {
     e.preventDefault();
     console.log(e.target.files[0]);
@@ -109,12 +115,32 @@ function SubmitApplicationForm() {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setLoading(true);
     try {
-      console.log(values);
-
+    
       const formData = new FormData();
       formData.append("reason", values.deferment_reason);
       formData.append("others", values.other);
       formData.append("pdf_form", fileUpload);
+
+      if (values.deferment_reason === "") {
+        toast({
+          variant: "destructive",
+          description: "Deferment reason is required",
+        });
+      } else if (values.other === "" && isOther) {
+        toast({
+          variant: "destructive",
+          description: "Others is required",
+        });
+      } else if (fileUpload === null) {
+        toast({
+          variant: "destructive",
+          description: "Deferment application form is required",
+        });
+      }
+
+      if (values.deferment_reason === "" || fileUpload === null || (values.other === "" && isOther)) {
+        return;
+      }
 
       await axiosInstance.post("/api/deferment-application", formData);
 
@@ -307,7 +333,7 @@ function SubmitApplicationForm() {
               >
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select a deferment reason" />
+                    <SelectValue defaultValue="" placeholder="Select a deferment reason" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
@@ -466,10 +492,28 @@ function SubmitApplicationForm() {
 
         <div className="my-4 py-2">
           <FormLabel>Upload Deferment Application Form</FormLabel>
-          <Input id="pdf_file" type="file" onChange={handleFileUpload} />
+          <Input id="pdf_file" type="file" accept=".pdf" onChange={handleFileUpload} disabled={
+            (selectedValue != "" && !(specialReasons.includes(selectedValue) || parsedUser.deferment_streak < 2)
+            || !(parsedUser.deferment_streak < 4)
+            || !((parsedUser.current_semester + 1) < parsedUser.max_semester))
+          }/>
+        </div>
+        <div className="my-4 py-2 text-center text-red-500" hidden={selectedValue == "" || (specialReasons.includes(selectedValue) || parsedUser.deferment_streak < 2 || parsedUser.deferment_streak >= 4)}>
+          <FormLabel>Consecutive deferments of more than 2 semester not allowed</FormLabel>
+        </div>
+        <div className="my-4 py-2 text-center text-red-500" hidden={parsedUser.deferment_streak < 4}>
+          <FormLabel>Consecutive deferments of more than 4 semester not allowed</FormLabel>
+        </div>
+        <div className="my-4 py-2 text-center text-red-500" hidden={(parsedUser.current_semester + 1) < parsedUser.max_semester }>
+          <FormLabel>Exceed maximum allowable semester</FormLabel>
         </div>
         <div className="flex w-full justify-around">
-          <Button className="text-right w-full mx-1" type="submit">
+          <Button className="text-right w-full mx-1" type="submit" disabled={
+            (selectedValue != "" && !(specialReasons.includes(selectedValue) || parsedUser.deferment_streak < 2)
+            || !(parsedUser.deferment_streak < 4)
+            || !((parsedUser.current_semester + 1) < parsedUser.max_semester))
+          }
+          >
             Submit
           </Button>
         </div>

@@ -30,7 +30,10 @@ function StudentDashboard({
       <Button
         className="ml-20 border-gray-300 border"
         variant="secondary"
-        disabled={!user || user.max_semester - user.current_semester - 1 <= 0 || user.deferment_streak > 2 || (systemInfo?.systemInfo.currentSemester && applications.some((application: any) => application.semester_code == systemInfo?.systemInfo.currentSemester))}
+        disabled={!user 
+          || (systemInfo?.systemInfo.currentSemester && applications.some((application: any) => application.semester_code == systemInfo?.systemInfo.currentSemester))
+          || (systemInfo?.systemInfo.semesterExpiration && new Date(systemInfo?.systemInfo.semesterExpiration).getTime() < new Date().getTime())
+        }
         onClick={() => navigate("/application/submit")}
       >
         Create a new deferment application
