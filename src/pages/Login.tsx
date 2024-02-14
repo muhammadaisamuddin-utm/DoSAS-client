@@ -18,8 +18,9 @@ import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import { Toaster } from "@/components/ui/toaster";
 import { axiosInstance } from "@/lib/axiosInstance";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
+import { SystemContext } from "@/App";
 
 const formSchema = z.object({
   email: z
@@ -40,6 +41,8 @@ function Login() {
   const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
 
   const navigate = useNavigate();
+  const systemContext = useContext(SystemContext);
+
   const { login } = useAuth();
   const { toast } = useToast();
 
@@ -70,7 +73,16 @@ function Login() {
       if (response.status !== 200) {
         throw new Error("teest");
       }
-
+      const systemInfoResponse = await axiosInstance.get("/api/system-properties");
+      const currentSemester = systemInfoResponse.data.data.find((item: any) => item.name === "current_semester")?.value
+      const semesterExpiration = systemInfoResponse.data.data.find((item: any) => item.name === "semester_deadline")?.value
+      
+      if (systemInfoResponse.data.data.length > 0) {
+        systemContext?.setSystemInfo({
+          currentSemester,
+          semesterExpiration,
+        });
+      }
       login?.(response.data);
       navigate("/home");
       return;

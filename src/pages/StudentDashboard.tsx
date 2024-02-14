@@ -5,6 +5,8 @@ import { DataTable } from "@/components/applications/datatable";
 import { Button } from "@/components/ui/button";
 import { User } from "@/types/User";
 import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { SystemContext } from "@/App";
 
 interface StudentDashboardProps {
   user?: User | null;
@@ -16,14 +18,8 @@ function StudentDashboard({
   applications,
 }: Readonly<StudentDashboardProps>) {
   const navigate = useNavigate();
-
-  const isApplicationAllowed = (): boolean => {
-    if (!user) return false;
-    if (user.max_semester - user.current_semester - 1 <= 0) return false;
-    if (user.deferment_streak > 2) return false;
-    return true;
-  };
-
+  const systemInfo = useContext(SystemContext);
+  
   return (
     <>
       <Header username={user?.name} role={user?.role} />
@@ -34,7 +30,7 @@ function StudentDashboard({
       <Button
         className="ml-20 border-gray-300 border"
         variant="secondary"
-        disabled={!isApplicationAllowed}
+        disabled={!user || user.max_semester - user.current_semester - 1 <= 0 || user.deferment_streak > 2 || (systemInfo?.systemInfo.currentSemester && applications.some((application: any) => application.semester_code == systemInfo?.systemInfo.currentSemester))}
         onClick={() => navigate("/application/submit")}
       >
         Create a new deferment application

@@ -50,7 +50,7 @@ function Countdown() {
   const getTargetDate = async () => {
     try {
       const response = await axiosInstance.get("/api/system-properties");
-      const dateStr = new Date(response.data.data[1].value).getTime();
+      const dateStr = new Date(response.data.data.find((item: any) => item.name === "semester_deadline").value).getTime();
       setTargetDate(dateStr);
     } catch (error) {
       console.error(error);

@@ -14,6 +14,7 @@ import { AuthProvider } from "./authContext";
 import LandingPage from "./pages/LandingPage";
 import ManageApplicationDetails from "./pages/ManageApplicationDetails";
 import { applicationsLoader } from "./lib/loader";
+import { createContext, useState } from "react";
 // import ManageApplicationByOfficeAssistant from "./pages/ManageApplicationByOfficeAssistant";
 
 const router = createBrowserRouter([
@@ -101,14 +102,37 @@ const router = createBrowserRouter([
   },
 ]);
 
+type SystemContextType = {
+  systemInfo: {
+    currentSemester: string;
+    semesterExpiration: string;
+  };
+  setSystemInfo: React.Dispatch<React.SetStateAction<{
+    currentSemester: string;
+    semesterExpiration: string;
+  }>>;
+};
+
+export const SystemContext = createContext<SystemContextType | null>(null);
+
 function App() {
+  const [systemInfo, setSystemInfo] = useState({
+    currentSemester: "",
+    semesterExpiration: "",
+  });
+
   return (
-    <AuthProvider>
-      <RouterProvider
-        router={router}
-        fallbackElement={<p>Initial Load...</p>}
-      />
-    </AuthProvider>
+    <SystemContext.Provider value={{
+      systemInfo,
+      setSystemInfo,
+    }}>
+      <AuthProvider>
+        <RouterProvider
+          router={router}
+          fallbackElement={<p>Initial Load...</p>}
+        />
+      </AuthProvider>
+    </SystemContext.Provider>
   );
 }
 
