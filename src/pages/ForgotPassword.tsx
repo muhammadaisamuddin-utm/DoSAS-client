@@ -15,6 +15,8 @@ import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import { Toaster } from "@/components/ui/toaster";
 import { axiosInstance } from "@/lib/axiosInstance";
+import { Loading } from "@/components/loading";
+import { useState } from "react";
 
 const formSchema = z.object({
   email: z
@@ -25,6 +27,8 @@ const formSchema = z.object({
 function ForgotPassword() {
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  const [loading, setLoading] = useState<boolean>(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -39,6 +43,7 @@ function ForgotPassword() {
   };
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    setLoading(true);
     try {
       const response = await axiosInstance.post("/api/forgot-password", values);
       console.log(response);
@@ -56,6 +61,8 @@ function ForgotPassword() {
         variant: "destructive",
         description: error.response.data.message,
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -63,7 +70,7 @@ function ForgotPassword() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="flex flex-col border mt-10 mx-auto p-10 w-1/4 space-y-6 text-left rounded-xl shadow-md bgx-red-500"
+        className="relative flex flex-col border mt-10 mx-auto p-10 w-1/4 space-y-6 text-left rounded-xl shadow-md bgx-red-500"
       >
         <span className="text-center text-2xl font-bold ">
           Forgot your password
@@ -98,6 +105,7 @@ function ForgotPassword() {
         </Button>
 
         <Toaster />
+        <div>{loading && <Loading />}</div>
       </form>
     </Form>
   );

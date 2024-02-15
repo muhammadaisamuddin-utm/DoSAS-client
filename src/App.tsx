@@ -8,14 +8,11 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import { RequireAuth } from "./RequireAuth";
 import SubmitApplicationForm from "./pages/SubmitApplicationForm";
 import UpdateApplicationForm from "./pages/UpdateApplicationForm";
-import ViewApplicationByStudent from "./pages/ViewApplicationByStudent";
 import { AuthProvider } from "./authContext";
-// import ViewApplicationByOfficeAssistant from "./pages/ViewApplicationByOfficeAssistant";
 import LandingPage from "./pages/LandingPage";
 import ManageApplicationDetails from "./pages/ManageApplicationDetails";
 import { applicationsLoader } from "./lib/loader";
 import { createContext, useState } from "react";
-// import ManageApplicationByOfficeAssistant from "./pages/ManageApplicationByOfficeAssistant";
 
 const router = createBrowserRouter([
   {
@@ -94,11 +91,6 @@ const router = createBrowserRouter([
         ),
       },
     ],
-  },
-  {
-    path: "/test",
-    loader: applicationsLoader,
-    element: <ViewApplicationByStudent />,
   },
 ]);
 
