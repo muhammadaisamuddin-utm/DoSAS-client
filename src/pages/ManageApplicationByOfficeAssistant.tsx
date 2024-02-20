@@ -248,8 +248,6 @@ function ManageApplicationByOfficeAssistant() {
   };
 
   const isActionAllowed = (action: string, status: string) => {
-    console.log(action)
-    console.log(status)
     if (action === "approve" && status === "pending") return false;
     if (action === "check" && status === "pending_approval") return false;
     return true;
