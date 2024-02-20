@@ -138,7 +138,7 @@ function ManageApplicationBySigner() {
     } catch (error) {
       toast({
         variant: "destructive",
-        description: "Error handling request",
+        description: "Unable to reject application",
       });
     }
   };
@@ -171,7 +171,7 @@ function ManageApplicationBySigner() {
 
       toast({
         variant: "destructive",
-        description: "Error handling request",
+        description: "Unable to download file",
       });
     }
   };
@@ -201,7 +201,7 @@ function ManageApplicationBySigner() {
     } catch (error) {
       toast({
         variant: "destructive",
-        description: "Error handling request",
+        description: "Unable to endorse application",
       });
     }
   };

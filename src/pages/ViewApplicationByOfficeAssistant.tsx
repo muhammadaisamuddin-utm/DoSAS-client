@@ -82,7 +82,7 @@ function ViewApplicationByOfficeAssistant() {
 
       toast({
         variant: "destructive",
-        description: "Error handling request",
+        description: "Unable to download file",
       });
     }
   };

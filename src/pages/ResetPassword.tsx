@@ -125,7 +125,7 @@ function ResetPassword({ isFirstTime }: Readonly<ResetPasswordProp>) {
 
       toast({
         variant: "destructive",
-        description: "Error handling request",
+        description: "Unable to reset password",
       });
     }
   };

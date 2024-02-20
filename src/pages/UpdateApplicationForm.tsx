@@ -91,7 +91,7 @@ function UpdateApplicationByStudent() {
 
       toast({
         variant: "destructive",
-        description: "Error handling request",
+        description: "Unable to download file",
       });
     }
   };
@@ -122,7 +122,7 @@ function UpdateApplicationByStudent() {
 
       toast({
         variant: "destructive",
-        description: "Error handling request",
+        description: "Unable to update application",
       });
     } finally {
       setLoading(false);

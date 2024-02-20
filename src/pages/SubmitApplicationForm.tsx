@@ -74,7 +74,7 @@ function SubmitApplicationForm() {
   const [loading, setLoading] = useState<boolean>(false);
 
   const { user } = useAuth();
-  
+
   let parsedUser: any;
   if (user != null || user != undefined) parsedUser = JSON.parse(user);
 
@@ -115,7 +115,7 @@ function SubmitApplicationForm() {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setLoading(true);
     try {
-    
+
       const formData = new FormData();
       formData.append("reason", values.deferment_reason);
       formData.append("others", values.other);
@@ -159,12 +159,14 @@ function SubmitApplicationForm() {
 
       toast({
         variant: "destructive",
-        description: "Error handling request",
+        description: "Unable to submit application",
       });
     } finally {
       setLoading(false);
     }
   };
+
+  console.log(parsedUser);
 
   return (
     <Form {...form}>
@@ -494,9 +496,9 @@ function SubmitApplicationForm() {
           <FormLabel>Upload Deferment Application Form</FormLabel>
           <Input id="pdf_file" type="file" accept=".pdf" onChange={handleFileUpload} disabled={
             (selectedValue != "" && !(specialReasons.includes(selectedValue) || parsedUser.deferment_streak < 2)
-            || !(parsedUser.deferment_streak < 4)
-            || !((parsedUser.current_semester + 1) < parsedUser.max_semester))
-          }/>
+              || !(parsedUser.deferment_streak < 4)
+              || !((parsedUser.current_semester + 1) < parsedUser.max_semester))
+          } />
         </div>
         <div className="my-4 py-2 text-center text-red-500" hidden={selectedValue == "" || (specialReasons.includes(selectedValue) || parsedUser.deferment_streak < 2 || parsedUser.deferment_streak >= 4)}>
           <FormLabel>Consecutive deferments of more than 2 semester not allowed</FormLabel>
@@ -504,14 +506,14 @@ function SubmitApplicationForm() {
         <div className="my-4 py-2 text-center text-red-500" hidden={parsedUser.deferment_streak < 4}>
           <FormLabel>Consecutive deferments of more than 4 semester not allowed</FormLabel>
         </div>
-        <div className="my-4 py-2 text-center text-red-500" hidden={(parsedUser.current_semester + 1) < parsedUser.max_semester }>
+        <div className="my-4 py-2 text-center text-red-500" hidden={(parsedUser.current_semester + 1) < parsedUser.max_semester}>
           <FormLabel>Exceed maximum allowable semester</FormLabel>
         </div>
         <div className="flex w-full justify-around">
           <Button className="text-right w-full mx-1" type="submit" disabled={
             (selectedValue != "" && !(specialReasons.includes(selectedValue) || parsedUser.deferment_streak < 2)
-            || !(parsedUser.deferment_streak < 4)
-            || !((parsedUser.current_semester + 1) < parsedUser.max_semester))
+              || !(parsedUser.deferment_streak < 4)
+              || !((parsedUser.current_semester + 1) < parsedUser.max_semester))
           }
           >
             Submit
